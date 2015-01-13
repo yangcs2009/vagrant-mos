@@ -1,0 +1,8 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.provider :mcs do |mcs|
+    mcs.ami = "320bbeb9-788f-4e7b-86af-7ea377b6a99e"
+  end
+end
