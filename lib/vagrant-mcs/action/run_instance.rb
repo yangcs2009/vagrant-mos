@@ -103,6 +103,9 @@ module VagrantPlugins
             server = env[:mcs_compute].create_instance('fa1026fe-c082-4ead-8458-802bf65ca64c', 'C1_M1', nil, nil, nil, datadisk=9, bandwidth=2)
             #puts server
             #server = env[:mcs_compute].servers.create(options)
+          rescue Exception => e
+            raise Errors::FogError, :message
+=begin
           rescue Fog::Compute::MCS::NotFound => e
             # Invalid subnet doesn't have its own error so we catch and
             # check the error message here.
@@ -118,6 +121,8 @@ module VagrantPlugins
             raise Errors::InternalFogError,
               :error => e.message,
               :response => e.response.body
+
+=end
           end
 
           # Immediately save the ID since it is created at this point.
@@ -134,7 +139,7 @@ module VagrantPlugins
                 next if env[:interrupted]
 
                 # Wait for the server to be ready
-                server.wait_for(2, 5) { ready? }
+                #server.wait_for(2, 5) { ready? }
               end
             rescue Fog::Errors::TimeoutError
               # Delete the instance

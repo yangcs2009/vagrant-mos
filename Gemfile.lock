@@ -22,7 +22,7 @@ GIT
 PATH
   remote: .
   specs:
-    vagrant-mcs (0.7.13)
+    vagrant-mcs (0.7.16)
       crack (~> 0.4.2)
       fog (~> 1.22)
       mos_sdk

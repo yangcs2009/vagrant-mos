@@ -12,7 +12,7 @@ module VagrantPlugins
         end
 
         def call(env)
-          server         = env[:mcs_compute].servers.get(env[:machine].id)
+          server         = env[:mcs_compute].describe_instances(env[:machine].id)
           region         = env[:machine].provider_config.region
           region_config  = env[:machine].provider_config.get_region_config(region)
 
@@ -27,7 +27,8 @@ module VagrantPlugins
 
           # Destroy the server and remove the tracking ID
           env[:ui].info(I18n.t("vagrant_mcs.terminating"))
-          server.destroy
+          #server.destroy
+          env[:mcs_compute].terminate_instance(env[:machine].id)
           env[:machine].id = nil
 
           @app.call(env)
