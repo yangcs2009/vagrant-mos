@@ -6,17 +6,17 @@ Gem::Specification.new do |s|
   s.version       = VagrantPlugins::MCS::VERSION
   s.platform      = Gem::Platform::RUBY
   s.license       = "MIT"
-  s.authors       = "Mitchell Hashimoto"
-  s.email         = "mitchell@hashicorp.com"
+  s.authors       = "yangchangsheng"
+  s.email         = "yangchangsheng@meituan.com"
   s.homepage      = "http://www.vagrantup.com"
-  s.summary       = "Enables Vagrant to manage machines in EC2 and VPC."
-  s.description   = "Enables Vagrant to manage machines in EC2 and VPC."
+  s.summary       = "Enables Vagrant to manage machines in MCS."
+  s.description   = "Enables Vagrant to manage machines in MCS."
 
   s.required_rubygems_version = ">= 1.3.6"
   s.rubyforge_project         = "vagrant-mcs"
 
   s.add_runtime_dependency "fog", "~> 1.22"
-  s.add_runtime_dependency "mos_sdk", ">= 0"
+  s.add_runtime_dependency "mos_sdk", ">= 1.0.0"
 
   s.add_runtime_dependency "crack", "~> 0.4.2"
   s.add_development_dependency "rake"

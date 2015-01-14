@@ -7,7 +7,7 @@ module VagrantPlugins
       # `:machine_ssh_info` key in the environment.
       class ReadSSHInfo
         def initialize(app, env)
-          @app    = app
+          @app = app
           @logger = Log4r::Logger.new("vagrant_mcs::action::read_ssh_info")
         end
 
@@ -38,6 +38,7 @@ module VagrantPlugins
           ssh_attrs = (Array(ssh_host_attribute) + ssh_attrs).uniq if ssh_host_attribute
           # try each attribute, get out on first value
           host_value = nil
+          puts server
           while !host_value and attr_name = ssh_attrs.shift
             begin
               host_value = server.send(attr_name)
@@ -45,8 +46,15 @@ module VagrantPlugins
               @logger.info("SSH host attribute not found #{attr_name}")
             end
           end
+          puts 2
 
-          return { :host => host_value, :port => 22 }
+          if !host_value
+            host_value = server["ipAddresses"]
+          end
+          puts server["ipAddresses"]
+          puts host_value
+          puts 3
+          return {:host => host_value, :port => 22}
         end
       end
     end
