@@ -21,7 +21,8 @@ module VagrantPlugins
           return nil if machine.id.nil?
 
           # Find the machine
-          server = mcs.describe_instances(machine.id)
+          server = (mcs.describe_instances([machine.id]))["Instance"]
+          #puts server
           #server = mcs.servers.get(machine.id)
           if server.nil?
             # The machine can't be found
@@ -38,7 +39,7 @@ module VagrantPlugins
           ssh_attrs = (Array(ssh_host_attribute) + ssh_attrs).uniq if ssh_host_attribute
           # try each attribute, get out on first value
           host_value = nil
-          puts server
+
           while !host_value and attr_name = ssh_attrs.shift
             begin
               host_value = server.send(attr_name)
@@ -46,14 +47,15 @@ module VagrantPlugins
               @logger.info("SSH host attribute not found #{attr_name}")
             end
           end
-          puts 2
+          #puts 2
 
           if !host_value
             host_value = server["ipAddresses"]
           end
-          puts server["ipAddresses"]
-          puts host_value
-          puts 3
+          #puts server
+          #puts server["ipAddresses"]
+          #puts host_value
+          #puts 3
           return {:host => host_value, :port => 22}
         end
       end

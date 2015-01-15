@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/vagrant_mcs.iml" filepath="$PROJECT_DIR$/.idea/vagrant_mcs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/vagrant-mcs.iml" filepath="$PROJECT_DIR$/.idea/vagrant-mcs.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/vagrant_mcs.iml" filepath="$PROJECT_DIR$/.idea/vagrant_mcs.iml" />
     </modules>
   </component>

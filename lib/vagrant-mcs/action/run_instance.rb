@@ -13,7 +13,7 @@ module VagrantPlugins
         include Vagrant::Util::Retryable
 
         def initialize(app, env)
-          @app    = app
+          @app = app
           @logger = Log4r::Logger.new("vagrant_mcs::action::run_instance")
         end
 
@@ -25,24 +25,24 @@ module VagrantPlugins
           region = env[:machine].provider_config.region
 
           # Get the configs
-          region_config         = env[:machine].provider_config.get_region_config(region)
-          ami                   = region_config.ami
-          availability_zone     = region_config.availability_zone
-          instance_type         = region_config.instance_type
-          keypair               = region_config.keypair_name
-          private_ip_address    = region_config.private_ip_address
-          security_groups       = region_config.security_groups
-          subnet_id             = region_config.subnet_id
-          tags                  = region_config.tags
-          user_data             = region_config.user_data
-          block_device_mapping  = region_config.block_device_mapping
-          elastic_ip            = region_config.elastic_ip
+          region_config = env[:machine].provider_config.get_region_config(region)
+          ami = region_config.ami
+          availability_zone = region_config.availability_zone
+          instance_type = region_config.instance_type
+          keypair = region_config.keypair_name
+          private_ip_address = region_config.private_ip_address
+          security_groups = region_config.security_groups
+          subnet_id = region_config.subnet_id
+          tags = region_config.tags
+          user_data = region_config.user_data
+          block_device_mapping = region_config.block_device_mapping
+          elastic_ip = region_config.elastic_ip
           terminate_on_shutdown = region_config.terminate_on_shutdown
-          iam_instance_profile_arn  = region_config.iam_instance_profile_arn
+          iam_instance_profile_arn = region_config.iam_instance_profile_arn
           iam_instance_profile_name = region_config.iam_instance_profile_name
-          monitoring            = region_config.monitoring
-          ebs_optimized         = region_config.ebs_optimized
-          associate_public_ip   = region_config.associate_public_ip
+          monitoring = region_config.monitoring
+          ebs_optimized = region_config.ebs_optimized
+          associate_public_ip = region_config.associate_public_ip
 
           # If there is no keypair then warn the user
           if !keypair
@@ -76,21 +76,21 @@ module VagrantPlugins
           env[:ui].info(" -- Assigning a public IP address in a VPC: #{associate_public_ip}")
 
           options = {
-            :availability_zone         => availability_zone,
-            :flavor_id                 => instance_type,
-            :image_id                  => ami,
-            :key_name                  => keypair,
-            :private_ip_address        => private_ip_address,
-            :subnet_id                 => subnet_id,
-            :iam_instance_profile_arn  => iam_instance_profile_arn,
-            :iam_instance_profile_name => iam_instance_profile_name,
-            :tags                      => tags,
-            :user_data                 => user_data,
-            :block_device_mapping      => block_device_mapping,
-            :instance_initiated_shutdown_behavior => terminate_on_shutdown == true ? "terminate" : nil,
-            :monitoring                => monitoring,
-            :ebs_optimized             => ebs_optimized,
-            :associate_public_ip        => associate_public_ip
+              :availability_zone => availability_zone,
+              :flavor_id => instance_type,
+              :image_id => ami,
+              :key_name => keypair,
+              :private_ip_address => private_ip_address,
+              :subnet_id => subnet_id,
+              :iam_instance_profile_arn => iam_instance_profile_arn,
+              :iam_instance_profile_name => iam_instance_profile_name,
+              :tags => tags,
+              :user_data => user_data,
+              :block_device_mapping => block_device_mapping,
+              :instance_initiated_shutdown_behavior => terminate_on_shutdown == true ? "terminate" : nil,
+              :monitoring => monitoring,
+              :ebs_optimized => ebs_optimized,
+              :associate_public_ip => associate_public_ip
           }
           if !security_groups.empty?
             security_group_key = options[:subnet_id].nil? ? :groups : :security_group_ids
@@ -100,9 +100,14 @@ module VagrantPlugins
 
           begin
             # todo
-            server = env[:mcs_compute].create_instance('fa1026fe-c082-4ead-8458-802bf65ca64c', 'C1_M1', nil, nil, nil, datadisk=9, bandwidth=2)
-            #puts server
-            #server = env[:mcs_compute].servers.create(options)
+            #puts options
+            #puts options['image_id']
+            #puts options[:flavor_id]
+            #puts options["key_name"]
+            server = env[:mcs_compute].create_instance(options[:image_id], options[:flavor_id], nil, nil, options[:key_name], datadisk=9, bandwidth=2)
+            #server = env[:mcs_compute].create_instance("320bbeb9-788f-4e7b-86af-7ea377b6a99e", "C2_M2", nil, nil, nil, datadisk=9, bandwidth=2)
+              #server = env[:mcs_compute].servers.create(options)
+            puts server
           rescue Exception => e
             raise Errors::FogError, :message
 =begin
@@ -147,7 +152,7 @@ module VagrantPlugins
 
               # Notify the user
               raise Errors::InstanceReadyTimeout,
-                timeout: region_config.instance_ready_timeout
+                    timeout: region_config.instance_ready_timeout
             end
           end
 
@@ -194,14 +199,14 @@ module VagrantPlugins
 
         def allows_ssh_port?(env, test_sec_groups, is_vpc)
           port = 22 # TODO get ssh_info port
-          test_sec_groups = [ "default" ] if test_sec_groups.empty? # MCS default security group
-          # filter groups by name or group_id (vpc)
+          test_sec_groups = ["default"] if test_sec_groups.empty? # MCS default security group
+                    # filter groups by name or group_id (vpc)
           groups = test_sec_groups.map do |tsg|
             env[:mcs_compute].security_groups.all.select { |sg| tsg == (is_vpc ? sg.group_id : sg.name) }
           end.flatten
-          # filter TCP rules
+                    # filter TCP rules
           rules = groups.map { |sg| sg.ip_permissions.select { |r| r["ipProtocol"] == "tcp" } }.flatten
-          # test if any range includes port
+                    # test if any range includes port
           !rules.select { |r| (r["fromPort"]..r["toPort"]).include?(port) }.empty?
         end
 
@@ -234,7 +239,7 @@ module VagrantPlugins
             else
               association = env[:mcs_compute].associate_address(server.id, nil, nil, allocation.body['allocationId'])
               # Only store release data for an allocated address
-              h = { :allocation_id => allocation.body['allocationId'], :association_id => association.body['associationId'], :public_ip => allocation.body['publicIp'] }
+              h = {:allocation_id => allocation.body['allocationId'], :association_id => association.body['associationId'], :public_ip => allocation.body['publicIp']}
             end
           else
             # Standard EC2 instances only need the allocated IP address
@@ -242,7 +247,7 @@ module VagrantPlugins
               association = env[:mcs_compute].associate_address(server.id, address.public_ip)
             else
               association = env[:mcs_compute].associate_address(server.id, allocation.body['publicIp'])
-              h = { :public_ip => allocation.body['publicIp'] }
+              h = {:public_ip => allocation.body['publicIp']}
             end
           end
 
@@ -250,11 +255,11 @@ module VagrantPlugins
             @logger.debug("Could not associate Elastic IP.")
             terminate(env)
             raise Errors::FogError,
-                            :message => "Could not allocate Elastic IP."
+                  :message => "Could not allocate Elastic IP."
           end
 
           # Save this IP to the data dir so it can be released when the instance is destroyed
-          if h 
+          if h
             ip_file = env[:machine].data_dir.join('elastic_ip')
             ip_file.open('w+') do |f|
               f.write(h.to_json)
@@ -262,11 +267,11 @@ module VagrantPlugins
           end
         end
 
-        def handle_elastic_ip_error(env, message) 
+        def handle_elastic_ip_error(env, message)
           @logger.debug(message)
           terminate(env)
           raise Errors::FogError,
-                          :message => message
+                :message => message
         end
 
         def terminate(env)

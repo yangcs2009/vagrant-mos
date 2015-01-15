@@ -23,10 +23,10 @@ module VagrantPlugins
           # Find the machine
           #puts mcs
           #puts machine.id
-          server = mcs.describe_instances(machine.id)
-          puts "read_state"
-          puts server
-          puts "finish read_state"
+          server = (mcs.describe_instances([machine.id]))["Instance"]
+          #puts "read_state"
+          #puts server
+          #puts "finish read_state"
           #server = mcs.servers.get(machine.id)
           if server.nil? || [:"shutting-down", :terminated].include?(server["status"])
             # The machine can't be found
