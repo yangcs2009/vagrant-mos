@@ -32,6 +32,9 @@ module VagrantPlugins
         env = @machine.action("read_state")
 
         state_id = env[:machine_state_id]
+        #if(state_id == "ready")
+        #  state_id = "stopped"
+        #end
 
         # Get the short and long description
         short = I18n.t("vagrant_mcs.states.short_#{state_id}")

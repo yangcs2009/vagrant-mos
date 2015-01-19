@@ -134,7 +134,7 @@ module VagrantPlugins
           b.use Provision
           b.use SyncedFolders
           b.use WarnNetworks
-          b.use ElbRegisterInstance
+          #b.use ElbRegisterInstance
         end
       end
 
@@ -174,11 +174,13 @@ module VagrantPlugins
             end
 
             b2.use action_halt
-            b2.use Call, WaitForState, :stopped, 120 do |env2, b3|
+            b2.use Call, WaitForState, "ready", 120 do |env2, b3|
               if env2[:result]
-                b3.use action_up
+                #b3.use action_up
+                b3.use StartInstance
               else
                 # TODO we couldn't reach :stopped, what now?
+                b3.use StartInstance
               end
             end
           end

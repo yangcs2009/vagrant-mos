@@ -50,7 +50,7 @@ en:
     waiting_for_ssh: |-
       Waiting for SSH to become available...
     warn_networks: |-
-      Warning! The MCS provider doesn't support any of the Vagrant
+      Warning! The MOS provider doesn't support any of the Vagrant
       high-level network configurations (`config.vm.network`). They
       will be silently ignored.
     warn_ssh_access: |-
@@ -66,7 +66,7 @@ en:
       ami_required: |-
         An AMI must be configured via "ami" (region: #{region})
       private_key_missing: |-
-        The specified private key for MCS could not be found
+        The specified private key for MOS could not be found
       region_required: |-
         A region must be specified via "region"
       secret_access_key_required: |-
@@ -76,32 +76,32 @@ en:
 
     errors:
       fog_error: |-
-        There was an error talking to MCS. The error message is shown
+        There was an error talking to MOS. The error message is shown
         below:
 
         %{message}
       internal_fog_error: |-
-        There was an error talking to MCS. The error message is shown
+        There was an error talking to MOS. The error message is shown
         below:
 
         Error: %{error}
         Response: %{response}
       instance_ready_timeout: |-
-        The instance never became "ready" in MCS. The timeout currently
+        The instance never became "ready" in MOS. The timeout currently
         set waiting for the instance to become ready is %{timeout} seconds.
         Please verify that the machine properly boots. If you need more time
-        set the `instance_ready_timeout` configuration on the MCS provider.
+        set the `instance_ready_timeout` configuration on the MOS provider.
       instance_package_error: |-
         There was an error packaging the instance. See details below for more info.
 
         AMI Id: %{ami_id}
         Error: %{err}
       instance_package_timeout: |-
-        The AMI failed to become "ready" in MCS. The timeout currently
+        The AMI failed to become "ready" in MOS. The timeout currently
         set waiting for the instance to become ready is %{timeout} seconds. For 
         larger instances AMI burning may take long periods of time. Please
         ensure the timeout is set high enough, it can be changed by adjusting
-        the `instance_package_timeout` configuration on the MCS provider.
+        the `instance_package_timeout` configuration on the MOS provider.
       rsync_error: |-
         There was an error when attempting to rsync a shared folder.
         Please inspect the error message below for more info.
@@ -122,32 +122,32 @@ en:
       short_not_created: |-
         not created
       long_not_created: |-
-        The EC2 instance is not created. Run `vagrant up` to create it.
+        The MOS instance is not created. Run `vagrant up` to create it.
 
-      short_stopped: |-
+      short_ready: |-
         stopped
-      long_stopped: |-
-        The EC2 instance is stopped. Run `vagrant up` to start it.
+      long_ready: |-
+        The MOS instance is stopped. Run `vagrant up` to start it.
 
       short_stopping: |-
         stopping
       long_stopping: |-
-        The EC2 instance is stopping. Wait until is completely stopped to
+        The MOS instance is stopping. Wait until is completely stopped to
         run `vagrant up` and start it.
 
       short_pending: |-
         pending
       long_pending: |-
-        The EC2 instance is pending a start (i.e. this is a transition state).
+        The MOS instance is pending a start (i.e. this is a transition state).
 
       short_running: |-
         running
       long_running: |-
-        The EC2 instance is running. To stop this machine, you can run
+        The MOS instance is running. To stop this machine, you can run
         `vagrant halt`. To destroy the machine, you can run `vagrant destroy`.
 
       short_pending: |-
         pending
       long_pending: |-
-        The EC2 instance is still being initialized. To destroy this machine,
+        The MOS instance is still being initialized. To destroy this machine,
         you can run `vagrant destroy`.

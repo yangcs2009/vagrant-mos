@@ -3,6 +3,6 @@
 
 Vagrant.configure("2") do |config|
   config.vm.provider :mcs do |mcs|
-    mcs.ami = "320bbeb9-788f-4e7b-86af-7ea377b6a99e"
+    mcs.ami = "fa1026fe-c082-4ead-8458-802bf65ca64c"
   end
 end

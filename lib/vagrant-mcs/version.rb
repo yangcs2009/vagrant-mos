@@ -1,5 +1,5 @@
 module VagrantPlugins
   module MCS
-    VERSION = '0.8.23'
+    VERSION = '0.8.39'
   end
 end

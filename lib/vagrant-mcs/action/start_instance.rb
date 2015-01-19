@@ -20,12 +20,13 @@ module VagrantPlugins
           # Initialize metrics if they haven't been
           env[:metrics] ||= {}
 
-          server = env[:mcs_compute].servers.get(env[:machine].id)
-
+          #server = env[:mcs_compute].servers.get(env[:machine].id)
+          server = (env[:mcs_compute].describe_instances([env[:machine].id]))["Instance"]
           env[:ui].info(I18n.t("vagrant_mcs.starting"))
 
           begin
-            server.start
+            #server.start
+            env[:mcs_compute].start_instance(env[:machine].id)
 
             region = env[:machine].provider_config.region
             region_config = env[:machine].provider_config.get_region_config(region)
@@ -35,19 +36,19 @@ module VagrantPlugins
               tries = region_config.instance_ready_timeout / 2
 
               env[:ui].info(I18n.t("vagrant_mcs.waiting_for_ready"))
-              begin
-                retryable(:on => Fog::Errors::TimeoutError, :tries => tries) do
-                  # If we're interrupted don't worry about waiting
-                  next if env[:interrupted]
-
-                  # Wait for the server to be ready
-                  #server.wait_for(2) { ready? }
-                end
-              rescue Fog::Errors::TimeoutError
-                # Notify the user
-                raise Errors::InstanceReadyTimeout,
-                  timeout: region_config.instance_ready_timeout
-              end
+              #begin
+              #  retryable(:on => Fog::Errors::TimeoutError, :tries => tries) do
+              #    # If we're interrupted don't worry about waiting
+              #    next if env[:interrupted]
+              #
+              #    # Wait for the server to be ready
+              #    #server.wait_for(2) { ready? }
+              #  end
+              #rescue Fog::Errors::TimeoutError
+              #  # Notify the user
+              #  raise Errors::InstanceReadyTimeout,
+              #    timeout: region_config.instance_ready_timeout
+              #end
             end
           rescue Fog::Compute::MCS::Error => e
             raise Errors::FogError, :message => e.message

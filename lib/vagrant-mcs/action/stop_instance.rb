@@ -11,13 +11,14 @@ module VagrantPlugins
         end
 
         def call(env)
-          server = env[:mcs_compute].servers.get(env[:machine].id)
-
-          if env[:machine].state.id == :stopped
-            env[:ui].info(I18n.t("vagrant_mcs.already_status", :status => env[:machine].state.id))
+          #server = env[:mcs_compute].servers.get(env[:machine].id)
+          #server = (env[:mcs_compute].describe_instances([env[:machine].id]))["Instance"]
+          if env[:machine].state.id == "ready"
+            env[:ui].info(I18n.t("vagrant_mcs.already stopped"))
           else
             env[:ui].info(I18n.t("vagrant_mcs.stopping"))
-            server.stop(!!env[:force_halt])
+            #server.stop(!!env[:force_halt])
+            env[:mcs_compute].stop_instance(env[:machine].id)
           end
 
           @app.call(env)

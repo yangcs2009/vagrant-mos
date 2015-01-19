@@ -107,7 +107,7 @@ module VagrantPlugins
             server = env[:mcs_compute].create_instance(options[:image_id], options[:flavor_id], nil, nil, options[:key_name], datadisk=9, bandwidth=2)
             #server = env[:mcs_compute].create_instance("320bbeb9-788f-4e7b-86af-7ea377b6a99e", "C2_M2", nil, nil, nil, datadisk=9, bandwidth=2)
               #server = env[:mcs_compute].servers.create(options)
-            puts server
+            #puts server
           rescue Exception => e
             raise Errors::FogError, :message
 =begin
