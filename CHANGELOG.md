@@ -6,15 +6,15 @@
 # 0.5.0 (June 22, 2014)
 
 * Support for associating public IPs for VMs inside of VPCs (GH
-  [#219](https://github.com/mitchellh/vagrant-mcs/pull/219), GH
-  [#205](https://github.com/mitchellh/vagrant-mcs/issues/205))
+  [#219](https://github.com/mitchellh/vagrant-mos/pull/219), GH
+  [#205](https://github.com/mitchellh/vagrant-mos/issues/205))
 * Bug-fix for per region configs with `associate_public_ip` (GH
-  [#237](https://github.com/mitchellh/vagrant-mcs/pull/237))
+  [#237](https://github.com/mitchellh/vagrant-mos/pull/237))
 * rsyncing folders uses `--delete` flag to better emulate "real shared folders
-  (GH [#194](https://github.com/mitchellh/vagrant-mcs/pull/194))
-* fog gem version bumped to 1.22 (GH [#253](https://github.com/mitchellh/vagrant-mcs/pull/253))
-* Simple ELB support (GH [#88](https://github.com/mitchellh/vagrant-mcs/pull/88),
-  GH [#238](https://github.com/mitchellh/vagrant-mcs/pull/238))
+  (GH [#194](https://github.com/mitchellh/vagrant-mos/pull/194))
+* fog gem version bumped to 1.22 (GH [#253](https://github.com/mitchellh/vagrant-mos/pull/253))
+* Simple ELB support (GH [#88](https://github.com/mitchellh/vagrant-mos/pull/88),
+  GH [#238](https://github.com/mitchellh/vagrant-mos/pull/238))
 
 # 0.4.1 (December 17, 2013)
 
@@ -68,18 +68,18 @@
 
 # 0.1.3 (April 9, 2013)
 
-* The `MCS_ACCESS_KEY` and `MCS_SECRET_KEY` will be used if available
+* The `MOS_ACCESS_KEY` and `MOS_SECRET_KEY` will be used if available
   and no specific keys are set in the Vagrantfile. [GH-33]
 * Fix issues with SSH on VPCs, the correct IP is used. [GH-30]
 * Exclude the ".vagrant" directory from rsync.
 * Implement `:disabled` flag support for shared folders. [GH-29]
-* `mcs.user_data` to specify user data on the instance. [GH-26]
+* `mos.user_data` to specify user data on the instance. [GH-26]
 
 # 0.1.2 (March 22, 2013)
 
-* Choose the proper region when connecting to MCS. [GH-9]
+* Choose the proper region when connecting to MOS. [GH-9]
 * Configurable SSH port. [GH-13]
-* Support other MCS-compatible API endpoints with `config.endpoint`
+* Support other MOS-compatible API endpoints with `config.endpoint`
   and `config.version`. [GH-6]
 * Disable strict host key checking on rsync so known hosts aren't an issue. [GH-7]
 

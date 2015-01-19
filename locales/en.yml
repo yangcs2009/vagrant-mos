@@ -1,5 +1,5 @@
 en:
-  vagrant_mcs:
+  vagrant_mos:
     already_status: |-
       The machine is already %{status}.
     burning_ami: |-
