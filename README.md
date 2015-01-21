@@ -49,7 +49,7 @@ manually within a `config.vm.provider` block. So first, add the dummy
 box using any name you want:
 
 ```
-$ vagrant box add dummy https://github.com/mitchellh/vagrant-mos/raw/master/dummy.box
+$ vagrant box add dummy https://github.com/mitchellh/vagrant-mos/raw/master/mos_box.box
 ...
 ```
 
@@ -58,12 +58,12 @@ your information where necessary.
 
 ```
 Vagrant.configure("2") do |config|
-  config.vm.box = "dummy"
+  config.vm.box = "mos_box"
 
   config.vm.provider :mos do |mos, override|
     mos.access_key_id = "YOUR KEY"
     mos.secret_access_key = "YOUR SECRET KEY"
-    mos.session_token = "SESSION TOKEN"
+    mos.secret_access_url = "YOUR MOS ACCESS URL"
     mos.keypair_name = "KEYPAIR NAME"
 
     mos.ami = "ami-7747d01e"
@@ -116,12 +116,9 @@ This provider exposes quite a few provider-specific configuration options:
   type to support both paravirtualization and hvm AMIs
 * `keypair_name` - The name of the keypair to use to bootstrap AMIs
    which support it.
-* `session_token` - The session token provided by STS
+* `secret_access_url` - The accee url for accessing MOS
 * `private_ip_address` - The private IP address to assign to an instance
   within a [VPC](http://mos.amazon.com/vpc/)
-* `elastic_ip` - Can be set to 'true', or to an existing Elastic IP address. 
-  If true, allocate a new Elastic IP address to the instance. If set
-  to an existing Elastic IP address, assign the address to the instance.
 * `region` - The region to start the instance in, such as "us-east-1"
 * `secret_access_key` - The secret access key for accessing MOS
 * `security_groups` - An array of security groups for the instance. If this

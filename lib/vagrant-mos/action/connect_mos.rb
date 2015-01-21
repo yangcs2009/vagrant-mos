@@ -1,6 +1,8 @@
 require "fog"
-require "mos_sdk"
+
 require "log4r"
+require "mos-sdk"
+include MOS
 
 module VagrantPlugins
   module MOS
@@ -13,6 +15,9 @@ module VagrantPlugins
           @app = app
           @logger = Log4r::Logger.new("vagrant_mos::action::connect_mos")
         end
+        #li= Client.new('c9b13af321f247a496f925d70ce001b3','7013bacdb1d44e0a851aa8786f742596','https://192.168.2.33:8883')
+        #puts li.get_balance
+
 
         def call(env)
           # Get the region we're going to booting up in
@@ -32,7 +37,6 @@ module VagrantPlugins
             fog_config[:mos_access_key_id] = region_config.access_key_id
             fog_config[:mos_secret_access_key] = region_config.secret_access_key
             fog_config[:mos_secret_url] = region_config.secret_access_url
-            #fog_config[:mos_session_token] = region_config.session_token
           end
 
           fog_config[:endpoint] = region_config.endpoint if region_config.endpoint
@@ -40,9 +44,11 @@ module VagrantPlugins
 
           @logger.info("Connecting to MOS...")
           #env[:mos_compute] = Fog::Compute.new(fog_config)
-          env[:mos_compute] = MosSdk::Client.new(region_config.access_key_id, region_config.secret_access_key, region_config.secret_access_url)
-          # env[:mos_elb]     = Fog::MOS::ELB.new(fog_config.except(:provider, :endpoint))
+          env[:mos_compute] = Client.new(region_config.access_key_id, region_config.secret_access_key, region_config.secret_access_url)
+          #require "mos-sdk"
+          #include MOS
 
+          # env[:mos_elb]     = Fog::MOS::ELB.new(fog_config.except(:provider, :endpoint))
           @app.call(env)
         end
       end

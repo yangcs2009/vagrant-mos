@@ -25,7 +25,7 @@ describe VagrantPlugins::MOS::Config do
     its("private_ip_address") { should be_nil }
     its("region")            { should == "us-east-1" }
     its("secret_access_key") { should be_nil }
-    its("session_token") { should be_nil }
+    its("secret_access_url") { should be_nil }
     its("security_groups")   { should == [] }
     its("subnet_id")         { should be_nil }
     its("iam_instance_profile_arn") { should be_nil }
@@ -34,7 +34,7 @@ describe VagrantPlugins::MOS::Config do
     its("user_data")         { should be_nil }
     its("use_iam_profile")   { should be_false }
     its("block_device_mapping")  {should == [] }
-    its("elastic_ip")        { should be_nil }
+    #its("elastic_ip")        { should be_nil }
     its("terminate_on_shutdown") { should == false }
     its("ssh_host_attribute") { should be_nil }
     its("monitoring")        { should == false }
@@ -49,8 +49,8 @@ describe VagrantPlugins::MOS::Config do
     # and asserts the proper result comes back out.
     [:access_key_id, :ami, :availability_zone, :instance_ready_timeout,
       :instance_package_timeout, :instance_type, :keypair_name, :ssh_host_attribute,
-      :ebs_optimized, :region, :secret_access_key, :session_token, :monitoring,
-      :associate_public_ip, :subnet_id, :tags, :elastic_ip, :terminate_on_shutdown,
+      :ebs_optimized, :region, :secret_access_key, :secret_access_url, :monitoring,
+      :associate_public_ip, :subnet_id, :tags, :terminate_on_shutdown,
       :iam_instance_profile_arn, :iam_instance_profile_name,
       :use_iam_profile, :user_data, :block_device_mapping].each do |attribute|
 
@@ -77,14 +77,14 @@ describe VagrantPlugins::MOS::Config do
 
       its("access_key_id")     { should be_nil }
       its("secret_access_key") { should be_nil }
-      its("session_token")     { should be_nil }
+      its("secret_access_url")     { should be_nil }
     end
 
-    context "with EC2 credential environment variables" do
+    context "with MOS credential environment variables" do
       before :each do
         ENV.stub(:[]).with("MOS_ACCESS_KEY").and_return("access_key")
         ENV.stub(:[]).with("MOS_SECRET_KEY").and_return("secret_key")
-        ENV.stub(:[]).with("MOS_SESSION_TOKEN").and_return("session_token")
+        ENV.stub(:[]).with("MOS_SECRET_URL").and_return("secret_url")
       end
 
       subject do
@@ -95,7 +95,7 @@ describe VagrantPlugins::MOS::Config do
 
       its("access_key_id")     { should == "access_key" }
       its("secret_access_key") { should == "secret_key" }
-      its("session_token")     { should == "session_token" }
+      its("secret_access_url")     { should == "secret_url" }
     end
   end
 
@@ -106,7 +106,7 @@ describe VagrantPlugins::MOS::Config do
     let(:config_keypair_name)      { "foo" }
     let(:config_region)            { "foo" }
     let(:config_secret_access_key) { "foo" }
-    let(:config_session_token)     { "foo" }
+    let(:config_secret_access_url)     { "foo" }
 
     def set_test_values(instance)
       instance.access_key_id     = config_access_key_id
@@ -115,7 +115,7 @@ describe VagrantPlugins::MOS::Config do
       instance.keypair_name      = config_keypair_name
       instance.region            = config_region
       instance.secret_access_key = config_secret_access_key
-      instance.session_token     = config_session_token
+      instance.secret_access_url     = config_secret_access_url
     end
 
     it "should raise an exception if not finalized" do
@@ -141,7 +141,7 @@ describe VagrantPlugins::MOS::Config do
       its("keypair_name")      { should == config_keypair_name }
       its("region")            { should == config_region }
       its("secret_access_key") { should == config_secret_access_key }
-      its("session_token")     { should == config_session_token }
+      its("secret_access_url") { should == config_secret_access_url }
     end
 
     context "with a specific config set" do
@@ -166,7 +166,7 @@ describe VagrantPlugins::MOS::Config do
       its("keypair_name")      { should == config_keypair_name }
       its("region")            { should == region_name }
       its("secret_access_key") { should == config_secret_access_key }
-      its("session_token")     { should == config_session_token }
+      its("secret_access_url") { should == config_secret_access_url }
     end
 
     describe "inheritance of parent config" do

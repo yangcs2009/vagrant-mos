@@ -44,12 +44,6 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :private_ip_address
 
-      # If true, acquire and attach an elastic IP address.
-      # If set to an IP address, assign to the instance.
-      #
-      # @return [String]
-      attr_accessor :elastic_ip
-
       # The name of the MOS region in which to create the instance.
       #
       # @return [String]
@@ -75,10 +69,6 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :secret_access_url
 
-      # The token associated with the key for accessing MOS.
-      #
-      # @return [String]
-      attr_accessor :session_token
 
       # The security groups to set on the instance. For VPC this must
       # be a list of IDs. For EC2, it can be either.
@@ -174,14 +164,13 @@ module VagrantPlugins
         @version                   = UNSET_VALUE
         @secret_access_key         = UNSET_VALUE
         @secret_access_url         = UNSET_VALUE
-        @session_token             = UNSET_VALUE
         @security_groups           = UNSET_VALUE
         @subnet_id                 = UNSET_VALUE
         @tags                      = {}
         @user_data                 = UNSET_VALUE
         @use_iam_profile           = UNSET_VALUE
         @block_device_mapping      = []
-        @elastic_ip                = UNSET_VALUE
+        #@elastic_ip                = UNSET_VALUE
         @iam_instance_profile_arn  = UNSET_VALUE
         @iam_instance_profile_name = UNSET_VALUE
         @terminate_on_shutdown     = UNSET_VALUE
@@ -274,7 +263,7 @@ module VagrantPlugins
         # will default to nil if the environment variables are not present.
         @access_key_id     = ENV['MOS_ACCESS_KEY'] if @access_key_id     == UNSET_VALUE
         @secret_access_key = ENV['MOS_SECRET_KEY'] if @secret_access_key == UNSET_VALUE
-        @session_token     = ENV['MOS_SESSION_TOKEN'] if @session_token == UNSET_VALUE
+        @secret_access_url = ENV['MOS_SECRET_URL'] if @secret_access_url == UNSET_VALUE
 
         # AMI must be nil, since we can't default that
         @ami = nil if @ami == UNSET_VALUE
@@ -286,7 +275,6 @@ module VagrantPlugins
         @instance_package_timeout = 600 if @instance_package_timeout == UNSET_VALUE
 
         # Default instance type is an m3.medium
-        #@instance_type = "m3.medium" if @instance_type == UNSET_VALUE
         @instance_type = "C1_M2" if @instance_type == UNSET_VALUE
         # Keypair defaults to nil
         @keypair_name = nil if @keypair_name == UNSET_VALUE
@@ -295,7 +283,7 @@ module VagrantPlugins
         @private_ip_address = nil if @private_ip_address == UNSET_VALUE
 
         # Acquire an elastic IP if requested
-        @elastic_ip = nil if @elastic_ip == UNSET_VALUE
+        #@elastic_ip = nil if @elastic_ip == UNSET_VALUE
 
         # Default region is us-east-1. This is sensible because MOS
         # generally defaults to this as well.

@@ -36,7 +36,7 @@ module VagrantPlugins
           tags = region_config.tags
           user_data = region_config.user_data
           block_device_mapping = region_config.block_device_mapping
-          elastic_ip = region_config.elastic_ip
+          #elastic_ip = region_config.elastic_ip
           terminate_on_shutdown = region_config.terminate_on_shutdown
           iam_instance_profile_arn = region_config.iam_instance_profile_arn
           iam_instance_profile_name = region_config.iam_instance_profile_name
@@ -50,9 +50,9 @@ module VagrantPlugins
           end
 
           # If there is a subnet ID then warn the user
-          if subnet_id && !elastic_ip
-            env[:ui].warn(I18n.t("vagrant_mos.launch_vpc_warning"))
-          end
+          #if subnet_id && !elastic_ip
+          #  env[:ui].warn(I18n.t("vagrant_mos.launch_vpc_warning"))
+          #end
 
           # Launch!
           env[:ui].info(I18n.t("vagrant_mos.launching_instance"))
@@ -65,7 +65,7 @@ module VagrantPlugins
           env[:ui].info(" -- IAM Instance Profile ARN: #{iam_instance_profile_arn}") if iam_instance_profile_arn
           env[:ui].info(" -- IAM Instance Profile Name: #{iam_instance_profile_name}") if iam_instance_profile_name
           env[:ui].info(" -- Private IP: #{private_ip_address}") if private_ip_address
-          env[:ui].info(" -- Elastic IP: #{elastic_ip}") if elastic_ip
+          #env[:ui].info(" -- Elastic IP: #{elastic_ip}") if elastic_ip
           env[:ui].info(" -- User Data: yes") if user_data
           env[:ui].info(" -- Security Groups: #{security_groups.inspect}") if !security_groups.empty?
           env[:ui].info(" -- User Data: #{user_data}") if user_data
@@ -159,10 +159,10 @@ module VagrantPlugins
           @logger.info("Time to instance ready: #{env[:metrics]["instance_ready_time"]}")
 
           # Allocate and associate an elastic IP if requested
-          if elastic_ip
-            domain = subnet_id ? 'vpc' : 'standard'
-            do_elastic_ip(env, domain, server, elastic_ip)
-          end
+          #if elastic_ip
+          #  domain = subnet_id ? 'vpc' : 'standard'
+          #  do_elastic_ip(env, domain, server, elastic_ip)
+          #end
 
           if !env[:interrupted]
             env[:metrics]["instance_ssh_time"] = Util::Timer.time do
@@ -210,6 +210,7 @@ module VagrantPlugins
           !rules.select { |r| (r["fromPort"]..r["toPort"]).include?(port) }.empty?
         end
 
+=begin
         def do_elastic_ip(env, domain, server, elastic_ip)
           if elastic_ip =~ /\d+\.\d+\.\d+\.\d+/
             begin
@@ -273,6 +274,7 @@ module VagrantPlugins
           raise Errors::FogError,
                 :message => message
         end
+=end
 
         def terminate(env)
           destroy_env = env.dup

@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.rubyforge_project         = "vagrant-mos"
 
   s.add_runtime_dependency "fog", "~> 1.22"
-  s.add_runtime_dependency "mos_sdk", ">= 1.0.0"
+  s.add_runtime_dependency "mos-sdk", ">= 1.0.0"
 
   s.add_runtime_dependency "crack", "~> 0.4.2"
   s.add_development_dependency "rake"

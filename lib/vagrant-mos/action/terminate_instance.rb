@@ -16,14 +16,14 @@ module VagrantPlugins
           region         = env[:machine].provider_config.region
           region_config  = env[:machine].provider_config.get_region_config(region)
 
-          elastic_ip     = region_config.elastic_ip
+          #elastic_ip     = region_config.elastic_ip
 
           # Release the elastic IP
-          ip_file = env[:machine].data_dir.join('elastic_ip')
-          if ip_file.file?
-            release_address(env,ip_file.read)
-            ip_file.delete
-          end
+          #ip_file = env[:machine].data_dir.join('elastic_ip')
+          #if ip_file.file?
+          #  release_address(env,ip_file.read)
+          #  ip_file.delete
+          #end
 
           # Destroy the server and remove the tracking ID
           env[:ui].info(I18n.t("vagrant_mos.terminating"))
