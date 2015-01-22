@@ -12,9 +12,9 @@ module VagrantPlugins
         end
 
         def call(env)
-          server         = env[:mos_compute].describe_instances(env[:machine].id)
-          region         = env[:machine].provider_config.region
-          region_config  = env[:machine].provider_config.get_region_config(region)
+          #server         = env[:mos_compute].describe_instances(env[:machine].id)
+          #region         = env[:machine].provider_config.region
+          #region_config  = env[:machine].provider_config.get_region_config(region)
 
           #elastic_ip     = region_config.elastic_ip
 

@@ -28,7 +28,7 @@ module VagrantPlugins
           #puts server
           #puts "finish read_state"
           #server = mos.servers.get(machine.id)
-          if server.nil? || [:"shutting-down", :terminated].include?(server["status"])
+          if server.nil? || [:"deleting"].include?(server["status"])
             # The machine can't be found
             @logger.info("Machine not found or terminated, assuming it got destroyed.")
             machine.id = nil

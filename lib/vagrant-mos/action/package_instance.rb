@@ -39,7 +39,8 @@ module VagrantPlugins
           # This block attempts to burn the server instance into an AMI
           begin
             # Get the Fog server object for given machine
-            server = env[:mos_compute].servers.get(env[:machine].id)
+            #server = env[:mos_compute].servers.get(env[:machine].id)
+            server = (env[:mos_compute].describe_instances([env[:machine].id]))["Instance"]
 
             env[:ui].info(I18n.t("vagrant_mos.packaging_instance", :instance_id => server.id))
             
