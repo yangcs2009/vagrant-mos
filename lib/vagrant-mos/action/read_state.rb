@@ -21,13 +21,7 @@ module VagrantPlugins
           return :not_created if machine.id.nil?
 
           # Find the machine
-          #puts mos
-          #puts machine.id
           server = (mos.describe_instances([machine.id]))["Instance"]
-          #puts "read_state"
-          #puts server
-          #puts "finish read_state"
-          #server = mos.servers.get(machine.id)
           if server.nil? || [:"deleting"].include?(server["status"])
             # The machine can't be found
             @logger.info("Machine not found or terminated, assuming it got destroyed.")
@@ -35,8 +29,6 @@ module VagrantPlugins
             return :not_created
           end
 
-          # Return the state
-          # puts server["status"]
           return server["status"]
 
         end

@@ -22,8 +22,7 @@ module VagrantPlugins
 
           # Find the machine
           server = (mos.describe_instances([machine.id]))["Instance"]
-          #puts server
-          #server = mos.servers.get(machine.id)
+
           if server.nil?
             # The machine can't be found
             @logger.info("Machine couldn't be found, assuming it got destroyed.")
@@ -47,16 +46,11 @@ module VagrantPlugins
               @logger.info("SSH host attribute not found #{attr_name}")
             end
           end
-          #puts 2
 
           if !host_value
             host_value = server["ipAddresses"]
           end
-          #puts "ssh_host_attribute: #{ssh_host_attribute}"
-          #puts "ssh_attrs: #{ssh_attrs}"
-          #puts server["ipAddresses"]
-          #puts host_value
-          #puts 3
+
           return {:host => host_value, :port => 22}
         end
       end

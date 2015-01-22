@@ -11,13 +11,10 @@ module VagrantPlugins
         end
 
         def call(env)
-          #server = env[:mos_compute].servers.get(env[:machine].id)
-          #server = (env[:mos_compute].describe_instances([env[:machine].id]))["Instance"]
           if env[:machine].state.id == "ready"
             env[:ui].info(I18n.t("vagrant_mos.already stopped"))
           else
             env[:ui].info(I18n.t("vagrant_mos.stopping"))
-            #server.stop(!!env[:force_halt])
             env[:mos_compute].stop_instance(env[:machine].id)
           end
 
