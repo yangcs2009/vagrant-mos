@@ -137,7 +137,7 @@ module VagrantPlugins
       # EBS optimized instance
       #
       # @return [Boolean]
-      attr_accessor :ebs_optimized
+      #attr_accessor :ebs_optimized
 
       # Assigning a public IP address in a VPC
       #
@@ -148,7 +148,7 @@ module VagrantPlugins
       # attached to
       #
       # @return [String]
-      attr_accessor :elb
+      #attr_accessor :elb
 
       def initialize(region_specific=false)
         @access_key_id             = UNSET_VALUE
@@ -176,9 +176,9 @@ module VagrantPlugins
         @terminate_on_shutdown     = UNSET_VALUE
         @ssh_host_attribute        = UNSET_VALUE
         @monitoring                = UNSET_VALUE
-        @ebs_optimized             = UNSET_VALUE
+        #@ebs_optimized             = UNSET_VALUE
         @associate_public_ip       = UNSET_VALUE
-        @elb                       = UNSET_VALUE
+        #@elb                       = UNSET_VALUE
 
         # Internal state (prefix with __ so they aren't automatically
         # merged)
@@ -318,13 +318,13 @@ module VagrantPlugins
         @monitoring = false if @monitoring == UNSET_VALUE
 
         # default false
-        @ebs_optimized = false if @ebs_optimized == UNSET_VALUE
+        #@ebs_optimized = false if @ebs_optimized == UNSET_VALUE
 
         # default false
         @associate_public_ip = false if @associate_public_ip == UNSET_VALUE
 
         # Don't attach instance to any ELB by default
-        @elb = nil if @elb == UNSET_VALUE
+        #@elb = nil if @elb == UNSET_VALUE
 
         # Compile our region specific configurations only within
         # NON-REGION-SPECIFIC configurations.

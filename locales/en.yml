@@ -4,17 +4,17 @@ en:
       The machine is already %{status}.
     burning_ami: |-
       Waiting for the AMI '%{ami_id}' to burn...
-    elb:
-      adjusting: |-
-        Adjusting availability zones of ELB %{elb_name}...
-      registering: |-
-        Registering %{instance_id} at ELB %{elb_name}...
-      deregistering: |-
-        Deregistering %{instance_id} from ELB %{elb_name}...
-      ok: |-
-        ok
-      skipped: |-
-        skipped
+#    elb:
+#      adjusting: |-
+#        Adjusting availability zones of ELB %{elb_name}...
+#      registering: |-
+#        Registering %{instance_id} at ELB %{elb_name}...
+#      deregistering: |-
+#        Deregistering %{instance_id} from ELB %{elb_name}...
+#      ok: |-
+#        ok
+#      skipped: |-
+#        skipped
 
     launching_instance: |-
       Launching an instance with the following settings...
@@ -115,8 +115,8 @@ en:
 
         Host path: %{hostpath}
         Error: %{err}
-      elb_does_not_exist: |-
-        ELB configured for the instance does not exist
+#      elb_does_not_exist: |-
+#        ELB configured for the instance does not exist
 
     states:
       short_not_created: |-

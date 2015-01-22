@@ -134,7 +134,6 @@ This provider exposes quite a few provider-specific configuration options:
 * `use_iam_profile` - If true, will use [IAM profiles](http://docs.mos.amazon.com/IAM/latest/UserGuide/instance-profiles.html)
   for credentials.
 * `block_device_mapping` - Amazon EC2 Block Device Mapping Property
-* `elb` - The ELB name to attach to the instance.
 
 These can be set like typical provider-specific configuration:
 
@@ -243,20 +242,6 @@ Vagrant.configure("2") do |config|
 
   config.vm.provider "mos" do |mos|
     mos.block_device_mapping = [{ 'DeviceName' => '/dev/sda1', 'Ebs.VolumeSize' => 50 }]
-  end
-end
-```
-
-### ELB (Elastic Load Balancers)
-
-You can automatically attach an instance to an ELB during boot and detach on destroy.
-
-```ruby
-Vagrant.configure("2") do |config|
-  # ... other stuff
-
-  config.vm.provider "mos" do |mos|
-    mos.elb = "production-web"
   end
 end
 ```

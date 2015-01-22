@@ -38,7 +38,7 @@ describe VagrantPlugins::MOS::Config do
     its("terminate_on_shutdown") { should == false }
     its("ssh_host_attribute") { should be_nil }
     its("monitoring")        { should == false }
-    its("ebs_optimized")     { should == false }
+    #its("ebs_optimized")     { should == false }
     its("associate_public_ip")     { should == false }
   end
 
@@ -49,7 +49,7 @@ describe VagrantPlugins::MOS::Config do
     # and asserts the proper result comes back out.
     [:access_key_id, :ami, :availability_zone, :instance_ready_timeout,
       :instance_package_timeout, :instance_type, :keypair_name, :ssh_host_attribute,
-      :ebs_optimized, :region, :secret_access_key, :secret_access_url, :monitoring,
+      :region, :secret_access_key, :secret_access_url, :monitoring,
       :associate_public_ip, :subnet_id, :tags, :terminate_on_shutdown,
       :iam_instance_profile_arn, :iam_instance_profile_name,
       :use_iam_profile, :user_data, :block_device_mapping].each do |attribute|

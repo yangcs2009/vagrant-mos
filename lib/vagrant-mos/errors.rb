@@ -35,9 +35,9 @@ module VagrantPlugins
         error_key(:mkdir_error)
       end
 
-      class ElbDoesNotExistError < VagrantMOSError
-        error_key("elb_does_not_exist")
-      end
+      #class ElbDoesNotExistError < VagrantMOSError
+      #  error_key("elb_does_not_exist")
+      #end
     end
   end
 end
