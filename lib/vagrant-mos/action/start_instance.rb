@@ -36,22 +36,27 @@ module VagrantPlugins
               tries = region_config.instance_ready_timeout / 2
 
               env[:ui].info(I18n.t("vagrant_mos.waiting_for_ready"))
-              #begin
-              #  retryable(:on => Fog::Errors::TimeoutError, :tries => tries) do
-              #    # If we're interrupted don't worry about waiting
-              #    next if env[:interrupted]
-              #
-              #    # Wait for the server to be ready
-              #    #server.wait_for(2) { ready? }
-              #  end
-              #rescue Fog::Errors::TimeoutError
-              #  # Notify the user
-              #  raise Errors::InstanceReadyTimeout,
-              #    timeout: region_config.instance_ready_timeout
-              #end
+              begin
+                retryable(:on => Errors::InstanceReadyTimeout, :tries => tries) do
+                  # If we're interrupted don't worry about waiting
+                  next if env[:interrupted]
+
+                  # Wait for the server to be ready
+                  #server.wait_for(2) { ready? }
+                  if(server["status"] == "running")
+                    break
+                  else
+                    sleep(2)
+                  end
+                end
+              rescue Errors::InstanceReadyTimeout
+                # Notify the user
+                raise Errors::InstanceReadyTimeout,
+                  timeout: region_config.instance_ready_timeout
+              end
             end
-          rescue Fog::Compute::MOS::Error => e
-            raise Errors::FogError, :message => e.message
+          rescue MOS::Error => e
+            raise Errors::MosError, :message => e.message
           end
 
           @logger.info("Time to instance ready: #{env[:metrics]["instance_ready_time"]}")

@@ -123,7 +123,7 @@ module VagrantPlugins
           rescue Fog::Compute::MOS::Error => e
             raise Errors::FogError, :message => e.message
           rescue Excon::Errors::HTTPStatusError => e
-            raise Errors::InternalFogError,
+            raise Errors::InternalMosError,
               :error => e.message,
               :response => e.response.body
 

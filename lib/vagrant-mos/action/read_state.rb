@@ -36,7 +36,7 @@ module VagrantPlugins
           end
 
           # Return the state
-          puts server["status"]
+          # puts server["status"]
           return server["status"]
 
         end

@@ -7,12 +7,12 @@ module VagrantPlugins
         error_namespace("vagrant_mos.errors")
       end
 
-      class FogError < VagrantMOSError
-        error_key(:fog_error)
+      class MosError < VagrantMOSError
+        error_key(:mos_error)
       end
 
-      class InternalFogError < VagrantMOSError
-        error_key(:internal_fog_error)
+      class InternalMosError < VagrantMOSError
+        error_key(:internal_mos_error)
       end
 
       class InstanceReadyTimeout < VagrantMOSError

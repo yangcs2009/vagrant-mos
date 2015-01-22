@@ -26,6 +26,7 @@ module VagrantPlugins
           # Get the configs
           region_config = env[:machine].provider_config.get_region_config(region)
 
+=begin
           # Build the fog config
           fog_config = {
               :provider => :mos,
@@ -41,6 +42,7 @@ module VagrantPlugins
 
           fog_config[:endpoint] = region_config.endpoint if region_config.endpoint
           fog_config[:version] = region_config.version if region_config.version
+=end
 
           @logger.info("Connecting to MOS...")
           #env[:mos_compute] = Fog::Compute.new(fog_config)

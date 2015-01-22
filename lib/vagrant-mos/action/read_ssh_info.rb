@@ -52,8 +52,8 @@ module VagrantPlugins
           if !host_value
             host_value = server["ipAddresses"]
           end
-          puts "ssh_host_attribute: #{ssh_host_attribute}"
-          puts "ssh_attrs: #{ssh_attrs}"
+          #puts "ssh_host_attribute: #{ssh_host_attribute}"
+          #puts "ssh_attrs: #{ssh_attrs}"
           #puts server["ipAddresses"]
           #puts host_value
           #puts 3
