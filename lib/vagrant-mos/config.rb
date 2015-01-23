@@ -8,28 +8,22 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :access_key_id
 
-      # The ID of the AMI to use.
+      # The ID of the image to use.
       #
       # @return [String]
       attr_accessor :ami
 
-      # The availability zone to launch the instance into. If nil, it will
-      # use the default for your account.
+      # The name of the instance to create.
       #
       # @return [String]
-      attr_accessor :availability_zone
+      attr_accessor :name
 
       # The timeout to wait for an instance to become ready.
       #
       # @return [Fixnum]
       attr_accessor :instance_ready_timeout
 
-      # The timeout to wait for an instance to successfully burn into an AMI.
-      #
-      # @return [Fixnum]
-      attr_accessor :instance_package_timeout
-
-      # The type of instance to launch, such as "m3.medium"
+      # The type of instance to launch, such as "C1_M1"
       #
       # @return [String]
       attr_accessor :instance_type
@@ -39,20 +33,10 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :keypair_name
 
-      # The private IP address to give this machine (VPC).
-      #
-      # @return [String]
-      attr_accessor :private_ip_address
-
       # The name of the MOS region in which to create the instance.
       #
       # @return [String]
       attr_accessor :region
-
-      # The EC2 endpoint to connect to
-      #
-      # @return [String]
-      attr_accessor :endpoint
 
       # The version of the MOS api to use
       #
@@ -69,50 +53,11 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :secret_access_url
 
-
-      # The security groups to set on the instance. For VPC this must
-      # be a list of IDs. For EC2, it can be either.
-      #
-      # @return [Array<String>]
-      attr_reader :security_groups
-
-      # The Amazon resource name (ARN) of the IAM Instance Profile
-      # to associate with the instance.
-      #
-      # @return [String]
-      attr_accessor :iam_instance_profile_arn
-
-      # The name of the IAM Instance Profile to associate with
-      # the instance.
-      #
-      # @return [String]
-      attr_accessor :iam_instance_profile_name
-
-      # The subnet ID to launch the machine into (VPC).
-      #
-      # @return [String]
-      attr_accessor :subnet_id
-
-      # The tags for the machine.
-      #
-      # @return [Hash<String, String>]
-      attr_accessor :tags
-
       # Use IAM Instance Role for authentication to MOS instead of an
       # explicit access_id and secret_access_key
       #
       # @return [Boolean]
       attr_accessor :use_iam_profile
-
-      # The user data string
-      #
-      # @return [String]
-      attr_accessor :user_data
-
-      # Block device mappings
-      #
-      # @return [Array<Hash>]
-      attr_accessor :block_device_mapping
 
       # Indicates whether an instance stops or terminates when you initiate shutdown from the instance
       #
@@ -129,56 +74,20 @@ module VagrantPlugins
       # @return [Symbol]
       attr_accessor :ssh_host_attribute
 
-      # Enables Monitoring
-      #
-      # @return [Boolean]
-      attr_accessor :monitoring
-
-      # EBS optimized instance
-      #
-      # @return [Boolean]
-      #attr_accessor :ebs_optimized
-
-      # Assigning a public IP address in a VPC
-      #
-      # @return [Boolean]
-      attr_accessor :associate_public_ip
-
-      # The name of ELB, which an instance should be
-      # attached to
-      #
-      # @return [String]
-      #attr_accessor :elb
-
       def initialize(region_specific=false)
         @access_key_id             = UNSET_VALUE
         @ami                       = UNSET_VALUE
-        @availability_zone         = UNSET_VALUE
         @instance_ready_timeout    = UNSET_VALUE
-        @instance_package_timeout  = UNSET_VALUE
+        @name             = UNSET_VALUE
         @instance_type             = UNSET_VALUE
         @keypair_name              = UNSET_VALUE
-        @private_ip_address        = UNSET_VALUE
         @region                    = UNSET_VALUE
-        @endpoint                  = UNSET_VALUE
         @version                   = UNSET_VALUE
         @secret_access_key         = UNSET_VALUE
         @secret_access_url         = UNSET_VALUE
-        @security_groups           = UNSET_VALUE
-        @subnet_id                 = UNSET_VALUE
-        @tags                      = {}
-        @user_data                 = UNSET_VALUE
         @use_iam_profile           = UNSET_VALUE
-        @block_device_mapping      = []
-        #@elastic_ip                = UNSET_VALUE
-        @iam_instance_profile_arn  = UNSET_VALUE
-        @iam_instance_profile_name = UNSET_VALUE
         @terminate_on_shutdown     = UNSET_VALUE
         @ssh_host_attribute        = UNSET_VALUE
-        @monitoring                = UNSET_VALUE
-        #@ebs_optimized             = UNSET_VALUE
-        @associate_public_ip       = UNSET_VALUE
-        #@elb                       = UNSET_VALUE
 
         # Internal state (prefix with __ so they aren't automatically
         # merged)
@@ -186,12 +95,6 @@ module VagrantPlugins
         @__finalized = false
         @__region_config = {}
         @__region_specific = region_specific
-      end
-
-      # set security_groups
-      def security_groups=(value)
-        # convert value to array if necessary
-        @security_groups = value.is_a?(Array) ? value : [value]
       end
 
       # Allows region-specific overrides of any of the settings on this
@@ -248,13 +151,6 @@ module VagrantPlugins
           # Set it
           result.instance_variable_set(:@__region_config, new_region_config)
 
-          # Merge in the tags
-          result.tags.merge!(self.tags)
-          result.tags.merge!(other.tags)
-
-          # Merge block_device_mapping
-          result.block_device_mapping |= self.block_device_mapping
-          result.block_device_mapping |= other.block_device_mapping
         end
       end
 
@@ -268,63 +164,31 @@ module VagrantPlugins
         # AMI must be nil, since we can't default that
         @ami = nil if @ami == UNSET_VALUE
 
+        # Default instance name is nil
+        @name = nil if @name == UNSET_VALUE
+
         # Set the default timeout for waiting for an instance to be ready
         @instance_ready_timeout = 120 if @instance_ready_timeout == UNSET_VALUE
 
-        # Set the default timeout for waiting for an instance to burn into and ami
-        @instance_package_timeout = 600 if @instance_package_timeout == UNSET_VALUE
 
-        # Default instance type is an m3.medium
+        # Default instance type is an C1_M2
         @instance_type = "C1_M2" if @instance_type == UNSET_VALUE
         # Keypair defaults to nil
         @keypair_name = nil if @keypair_name == UNSET_VALUE
 
-        # Default the private IP to nil since VPC is not default
-        @private_ip_address = nil if @private_ip_address == UNSET_VALUE
-
-        # Acquire an elastic IP if requested
-        #@elastic_ip = nil if @elastic_ip == UNSET_VALUE
-
         # Default region is us-east-1. This is sensible because MOS
         # generally defaults to this as well.
         @region = "us-east-1" if @region == UNSET_VALUE
-        @availability_zone = nil if @availability_zone == UNSET_VALUE
-        @endpoint = nil if @endpoint == UNSET_VALUE
         @version = nil if @version == UNSET_VALUE
-
-        # The security groups are empty by default.
-        @security_groups = [] if @security_groups == UNSET_VALUE
-
-        # Subnet is nil by default otherwise we'd launch into VPC.
-        @subnet_id = nil if @subnet_id == UNSET_VALUE
-
-        # IAM Instance profile arn/name is nil by default.
-        @iam_instance_profile_arn   = nil if @iam_instance_profile_arn  == UNSET_VALUE
-        @iam_instance_profile_name  = nil if @iam_instance_profile_name == UNSET_VALUE
 
         # By default we don't use an IAM profile
         @use_iam_profile = false if @use_iam_profile == UNSET_VALUE
-
-        # User Data is nil by default
-        @user_data = nil if @user_data == UNSET_VALUE
 
         # default false
         @terminate_on_shutdown = false if @terminate_on_shutdown == UNSET_VALUE
 
         # default to nil
         @ssh_host_attribute = nil if @ssh_host_attribute == UNSET_VALUE
-
-        # default false
-        @monitoring = false if @monitoring == UNSET_VALUE
-
-        # default false
-        #@ebs_optimized = false if @ebs_optimized == UNSET_VALUE
-
-        # default false
-        @associate_public_ip = false if @associate_public_ip == UNSET_VALUE
-
-        # Don't attach instance to any ELB by default
-        #@elb = nil if @elb == UNSET_VALUE
 
         # Compile our region specific configurations only within
         # NON-REGION-SPECIFIC configurations.
@@ -366,10 +230,8 @@ module VagrantPlugins
               config.access_key_id.nil?
             errors << I18n.t("vagrant_mos.config.secret_access_key_required") if \
               config.secret_access_key.nil?
-          end
-
-          if config.associate_public_ip && !config.subnet_id
-            errors << I18n.t("vagrant_mos.config.subnet_id_required_with_public_ip")
+            errors << I18n.t("vagrant_mos.config.secret_access_url_required") if \
+              config.secret_access_url.nil?
           end
 
           errors << I18n.interpolate("vagrant_mos.config.ami_required", :region => @region)  if config.ami.nil?

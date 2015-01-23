@@ -19,13 +19,13 @@ module VagrantPlugins
         error_key(:instance_ready_timeout)
       end
 
-      class InstancePackageError < VagrantMOSError
-        error_key(:instance_package_error)
-      end
+      #class InstancePackageError < VagrantMOSError
+      #  error_key(:instance_package_error)
+      #end
 
-      class InstancePackageTimeout < VagrantMOSError
-        error_key(:instance_package_timeout)
-      end
+      #class InstancePackageTimeout < VagrantMOSError
+      #  error_key(:instance_package_timeout)
+      #end
 
       class RsyncError < VagrantMOSError
         error_key(:rsync_error)

@@ -9,25 +9,23 @@
 [gem]: https://rubygems.org/gems/vagrant-mos
 [gemnasium]: https://gemnasium.com/mitchellh/vagrant-mos
 
-This is a [Vagrant](http://www.vagrantup.com) 1.2+ plugin that adds an [MOS](http://mos.amazon.com)
+This is a [Vagrant](http://www.vagrantup.com) 1.2+ plugin that adds an [MOS](http://cloud.sankuai.com/)
 provider to Vagrant, allowing Vagrant to control and provision machines in
-EC2 and VPC.
+MOS.
 
 **NOTE:** This plugin requires Vagrant 1.2+,
 
 ## Features
 
-* Boot EC2 or VPC instances.
+* Boot MOS instances.
 * SSH into the instances.
 * Provision the instances with any built-in Vagrant provisioner.
 * Minimal synced folder support via `rsync`.
-* Define region-specific configurations so Vagrant can manage machines
-  in multiple regions.
-* Package running instances into new vagrant-mos friendly boxes
-
+* Manage MOS machine's status through `vagrant status`.  
+  
 ## Usage
 
-Install using standard Vagrant 1.1+ plugin installation methods. After
+Install using standard Vagrant 1.2+ plugin installation methods. After
 installing, `vagrant up` and specify the `mos` provider. An example is
 shown below.
 
@@ -44,12 +42,12 @@ box file for Vagrant.
 ## Quick Start
 
 After installing the plugin (instructions above), the quickest way to get
-started is to actually use a dummy MOS box and specify all the details
-manually within a `config.vm.provider` block. So first, add the dummy
+started is to actually use a MOS box and specify all the details
+manually within a `config.vm.provider` block. So first, add the 
 box using any name you want:
 
 ```
-$ vagrant box add dummy https://github.com/mitchellh/vagrant-mos/raw/master/mos_box.box
+$ vagrant box add mos_box https://github.com/yangcs2009/vagrant-mos/raw/master/mos.box
 ...
 ```
 
@@ -66,9 +64,9 @@ Vagrant.configure("2") do |config|
     mos.secret_access_url = "YOUR MOS ACCESS URL"
     mos.keypair_name = "KEYPAIR NAME"
 
-    mos.ami = "ami-7747d01e"
+    mos.ami = "fa1026fe-c082-4ead-8458-802bf65ca64c"
 
-    override.ssh.username = "ubuntu"
+    override.ssh.username = "root"
     override.ssh.private_key_path = "PATH TO YOUR PRIVATE KEY"
   end
 end
@@ -103,37 +101,20 @@ provider-specific configuration for this provider.
 This provider exposes quite a few provider-specific configuration options:
 
 * `access_key_id` - The access key for accessing MOS
-* `ami` - The AMI id to boot, such as "ami-12345678"
-* `availability_zone` - The availability zone within the region to launch
-  the instance. If nil, it will use the default set by Amazon.
+* `ami` - The image id to boot, such as "fa1026fe-c082-4ead-8458-802bf65ca64c"
 * `instance_ready_timeout` - The number of seconds to wait for the instance
   to become "ready" in MOS. Defaults to 120 seconds.
-* `instance_package_timeout` - The number of seconds to wait for the instance
-  to be burnt into an AMI during packaging. Defaults to 600 seconds.
-* `instance_type` - The type of instance, such as "m3.medium". The default
-  value of this if not specified is "m3.medium".  "m1.small" has been
-  deprecated in "us-east-1" and "m3.medium" is the smallest instance
-  type to support both paravirtualization and hvm AMIs
-* `keypair_name` - The name of the keypair to use to bootstrap AMIs
+  * `instance_name` - The name of instance to be created, such as "ubuntu01". The default
+  value of this if not specified is 'default'.
+* `instance_type` - The type of instance, such as "C1_M1". The default
+  value of this if not specified is "C1_M2".
+* `keypair_name` - The name of the keypair to use to bootstrap images
    which support it.
 * `secret_access_url` - The accee url for accessing MOS
-* `private_ip_address` - The private IP address to assign to an instance
-  within a [VPC](http://mos.amazon.com/vpc/)
 * `region` - The region to start the instance in, such as "us-east-1"
 * `secret_access_key` - The secret access key for accessing MOS
-* `security_groups` - An array of security groups for the instance. If this
-  instance will be launched in VPC, this must be a list of security group
-  Name. For a nondefault VPC, you must use security group IDs instead (http://docs.mos.amazon.com/cli/latest/reference/ec2/run-instances.html).
-* `iam_instance_profile_arn` - The Amazon resource name (ARN) of the IAM Instance
-    Profile to associate with the instance
-* `iam_instance_profile_name` - The name of the IAM Instance Profile to associate
-  with the instance
-* `subnet_id` - The subnet to boot the instance into, for VPC.
-* `associate_public_ip` - If true, will associate a public IP address to an instance in a VPC.
-* `tags` - A hash of tags to set on the machine.
 * `use_iam_profile` - If true, will use [IAM profiles](http://docs.mos.amazon.com/IAM/latest/UserGuide/instance-profiles.html)
   for credentials.
-* `block_device_mapping` - Amazon EC2 Block Device Mapping Property
 
 These can be set like typical provider-specific configuration:
 
@@ -142,8 +123,9 @@ Vagrant.configure("2") do |config|
   # ... other stuff
 
   config.vm.provider :mos do |mos|
-    mos.access_key_id = "foo"
-    mos.secret_access_key = "bar"
+    mos.access_key_id = "your_key"
+    mos.secret_access_key = "your_secret"
+    mos.secret_access_url = "your_access_url"
   end
 end
 ```
@@ -194,57 +176,6 @@ the remote machine over SSH.
 
 See [Vagrant Synced folders: rsync](https://docs.vagrantup.com/v2/synced-folders/rsync.html)
 
-
-## Other Examples
-
-### Tags
-
-To use tags, simply define a hash of key/value for the tags you want to associate to your instance, like:
-
-```ruby
-Vagrant.configure("2") do |config|
-  # ... other stuff
-
-  config.vm.provider "mos" do |mos|
-    mos.tags = {
-	  'Name' => 'Some Name',
-	  'Some Key' => 'Some Value'
-    }
-  end
-end
-```
-
-### User data
-
-You can specify user data for the instance being booted.
-
-```ruby
-Vagrant.configure("2") do |config|
-  # ... other stuff
-
-  config.vm.provider "mos" do |mos|
-    # Option 1: a single string
-    mos.user_data = "#!/bin/bash\necho 'got user data' > /tmp/user_data.log\necho"
-
-    # Option 2: use a file
-    mos.user_data = File.read("user_data.txt")
-  end
-end
-```
-
-### Disk size
-
-Need more space on your instance disk? Increase the disk size.
-
-```ruby
-Vagrant.configure("2") do |config|
-  # ... other stuff
-
-  config.vm.provider "mos" do |mos|
-    mos.block_device_mapping = [{ 'DeviceName' => '/dev/sda1', 'Ebs.VolumeSize' => 50 }]
-  end
-end
-```
 
 ## Development
 

@@ -17,29 +17,16 @@ describe VagrantPlugins::MOS::Config do
 
     its("access_key_id")     { should be_nil }
     its("ami")               { should be_nil }
-    its("availability_zone") { should be_nil }
     its("instance_ready_timeout") { should == 120 }
-    its("instance_package_timeout") { should == 600 }
-    its("instance_type")     { should == "m3.medium" }
+    its("name")     { should be_nil }
+    its("instance_type")     { should == "C1_M2" }
     its("keypair_name")      { should be_nil }
-    its("private_ip_address") { should be_nil }
     its("region")            { should == "us-east-1" }
     its("secret_access_key") { should be_nil }
     its("secret_access_url") { should be_nil }
-    its("security_groups")   { should == [] }
-    its("subnet_id")         { should be_nil }
-    its("iam_instance_profile_arn") { should be_nil }
-    its("iam_instance_profile_name") { should be_nil }
-    its("tags")              { should == {} }
-    its("user_data")         { should be_nil }
     its("use_iam_profile")   { should be_false }
-    its("block_device_mapping")  {should == [] }
-    #its("elastic_ip")        { should be_nil }
     its("terminate_on_shutdown") { should == false }
     its("ssh_host_attribute") { should be_nil }
-    its("monitoring")        { should == false }
-    #its("ebs_optimized")     { should == false }
-    its("associate_public_ip")     { should == false }
   end
 
   describe "overriding defaults" do
@@ -47,12 +34,10 @@ describe VagrantPlugins::MOS::Config do
     # simple boilerplate test, so I cut corners here. It just sets
     # each of these attributes to "foo" in isolation, and reads the value
     # and asserts the proper result comes back out.
-    [:access_key_id, :ami, :availability_zone, :instance_ready_timeout,
-      :instance_package_timeout, :instance_type, :keypair_name, :ssh_host_attribute,
-      :region, :secret_access_key, :secret_access_url, :monitoring,
-      :associate_public_ip, :subnet_id, :tags, :terminate_on_shutdown,
-      :iam_instance_profile_arn, :iam_instance_profile_name,
-      :use_iam_profile, :user_data, :block_device_mapping].each do |attribute|
+    [:access_key_id, :ami, :instance_ready_timeout,:name,
+      :instance_type, :keypair_name, :ssh_host_attribute,
+      :region, :secret_access_key, :secret_access_url, :terminate_on_shutdown,
+      :use_iam_profile].each do |attribute|
 
       it "should not default #{attribute} if overridden" do
         instance.send("#{attribute}=".to_sym, "foo")
@@ -103,6 +88,7 @@ describe VagrantPlugins::MOS::Config do
     let(:config_access_key_id)     { "foo" }
     let(:config_ami)               { "foo" }
     let(:config_instance_type)     { "foo" }
+    let(:config_name)     { "foo" }
     let(:config_keypair_name)      { "foo" }
     let(:config_region)            { "foo" }
     let(:config_secret_access_key) { "foo" }
@@ -112,6 +98,7 @@ describe VagrantPlugins::MOS::Config do
       instance.access_key_id     = config_access_key_id
       instance.ami               = config_ami
       instance.instance_type     = config_instance_type
+      instance.name     = config_name
       instance.keypair_name      = config_keypair_name
       instance.region            = config_region
       instance.secret_access_key = config_secret_access_key
@@ -138,6 +125,7 @@ describe VagrantPlugins::MOS::Config do
       its("access_key_id")     { should == config_access_key_id }
       its("ami")               { should == config_ami }
       its("instance_type")     { should == config_instance_type }
+      its("name")     { should == config_name }
       its("keypair_name")      { should == config_keypair_name }
       its("region")            { should == config_region }
       its("secret_access_key") { should == config_secret_access_key }
@@ -163,6 +151,7 @@ describe VagrantPlugins::MOS::Config do
       its("access_key_id")     { should == config_access_key_id }
       its("ami")               { should == config_ami }
       its("instance_type")     { should == config_instance_type }
+      its("name")     { should == config_name }
       its("keypair_name")      { should == config_keypair_name }
       its("region")            { should == region_name }
       its("secret_access_key") { should == config_secret_access_key }
@@ -205,21 +194,6 @@ describe VagrantPlugins::MOS::Config do
     describe "merging" do
       let(:first)  { described_class.new }
       let(:second) { described_class.new }
-
-      it "should merge the tags and block_device_mappings" do
-        first.tags["one"] = "one"
-        second.tags["two"] = "two"
-        first.block_device_mapping = [{:one => "one"}]
-        second.block_device_mapping = [{:two => "two"}]
-
-        third = first.merge(second)
-        third.tags.should == {
-          "one" => "one",
-          "two" => "two"
-        }
-        third.block_device_mapping.index({:one => "one"}).should_not be_nil
-        third.block_device_mapping.index({:two => "two"}).should_not be_nil
-      end
     end
   end
 end

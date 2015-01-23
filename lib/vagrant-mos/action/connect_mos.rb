@@ -1,5 +1,3 @@
-require "fog"
-
 require "log4r"
 require "mos-sdk"
 include MOS
