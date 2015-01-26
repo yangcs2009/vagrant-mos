@@ -1,1 +1,0 @@
-Vagrant.require_plugin "vagrant-mcs"
