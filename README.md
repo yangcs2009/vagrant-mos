@@ -1,5 +1,4 @@
 # Vagrant MOS Provider
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/mitchellh/vagrant-mos?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 <span class="badges">
 [![Gem Version](https://badge.fury.io/rb/vagrant-mos.png)][gem]

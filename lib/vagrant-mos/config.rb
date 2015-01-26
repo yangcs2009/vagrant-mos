@@ -78,7 +78,7 @@ module VagrantPlugins
         @access_key_id             = UNSET_VALUE
         @ami                       = UNSET_VALUE
         @instance_ready_timeout    = UNSET_VALUE
-        @name             = UNSET_VALUE
+        @name                      = UNSET_VALUE
         @instance_type             = UNSET_VALUE
         @keypair_name              = UNSET_VALUE
         @region                    = UNSET_VALUE

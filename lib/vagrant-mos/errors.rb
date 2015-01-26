@@ -19,14 +19,6 @@ module VagrantPlugins
         error_key(:instance_ready_timeout)
       end
 
-      #class InstancePackageError < VagrantMOSError
-      #  error_key(:instance_package_error)
-      #end
-
-      #class InstancePackageTimeout < VagrantMOSError
-      #  error_key(:instance_package_timeout)
-      #end
-
       class RsyncError < VagrantMOSError
         error_key(:rsync_error)
       end
@@ -34,10 +26,6 @@ module VagrantPlugins
       class MkdirError < VagrantMOSError
         error_key(:mkdir_error)
       end
-
-      #class ElbDoesNotExistError < VagrantMOSError
-      #  error_key("elb_does_not_exist")
-      #end
     end
   end
 end
