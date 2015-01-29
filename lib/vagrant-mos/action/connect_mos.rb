@@ -22,7 +22,6 @@ module VagrantPlugins
           region_config = env[:machine].provider_config.get_region_config(region)
 
           @logger.info("Connecting to MOS...")
-          #env[:mos_compute] = Fog::Compute.new(fog_config)
           env[:mos_compute] = Client.new(region_config.access_key_id, region_config.secret_access_key, region_config.secret_access_url)
 
           @app.call(env)

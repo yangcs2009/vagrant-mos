@@ -24,6 +24,11 @@ module VagrantPlugins
         Config
       end
 
+      command "images" do
+        require_relative "command"
+        Command
+      end
+
       provider(:mos, parallel: true) do
         # Setup logging and i18n
         setup_logging

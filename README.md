@@ -16,6 +16,7 @@ MOS.
 
 ## Features
 
+* Support for Vagrant's `up`, `status`, `destroy`, `halt`, `reload` and `ssh` commands
 * Boot MOS instances.
 * SSH into the instances.
 * Provision the instances with any built-in Vagrant provisioner.
