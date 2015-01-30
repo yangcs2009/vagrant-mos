@@ -8,26 +8,23 @@
 [gem]: https://rubygems.org/gems/vagrant-mos
 [gemnasium]: https://gemnasium.com/mitchellh/vagrant-mos
 
-This is a [Vagrant](http://www.vagrantup.com) 1.2+ plugin that adds an [MOS](http://cloud.sankuai.com/)
-provider to Vagrant, allowing Vagrant to control and provision machines in
-MOS.
+该版本的[Vagrant](http://www.vagrantup.com) 1.2+ plugin现在支持[MOS](http://cloud.sankuai.com/)
+provider，从而使得Vagrant可以像管理VirtualBox那样管理美团云主机。
 
-**NOTE:** This plugin requires Vagrant 1.2+,
+**NOTE:** 该版本的plugin要求Vagrant版本为 1.2+,
 
-## Features
+## 主要功能
 
-* Support for Vagrant's `up`, `status`, `destroy`, `halt`, `reload` and `ssh` commands
-* Boot MOS instances.
-* SSH into the instances.
-* Provision the instances with any built-in Vagrant provisioner.
-* Minimal synced folder support via `rsync`.
-* Manage MOS machine's status through `vagrant status`.  
+* 支持Vagrant常用命令 `up`, `status`, `destroy`, `halt`, `reload` 以及 `ssh` 
+* 创建 MOS 主机实例
+* SSH连接已创建的主机
+* 支持通过`rsync`命令同步文件夹
+* 通过`vagrant status`命令管理已创建的MOS主机
+* 通过`vagrant images`查看可使用的镜像.  
   
-## Usage
+## 安装使用
 
-Install using standard Vagrant 1.2+ plugin installation methods. After
-installing, `vagrant up` and specify the `mos` provider. An example is
-shown below.
+按照安装Vagrant 1.2+ plugin的标准步骤安装即可。**在完成plugin以及MOS box安装后**，通过`vagrant up` 即可创建Vagrant MOS主机实例。下面是样例。
 
 ```
 $ vagrant plugin install vagrant-mos
@@ -36,23 +33,23 @@ $ vagrant up --provider=mos
 ...
 ```
 
-Of course prior to doing this, you'll need to obtain an MOS-compatible
-box file for Vagrant.
+## 快速入门
 
-## Quick Start
-
-After installing the plugin (instructions above), the quickest way to get
-started is to actually use a MOS box and specify all the details
-manually within a `config.vm.provider` block. So first, add the 
-box using any name you want:
+在按照上述步骤完成vagrant plugin安装后，要想快速使用vagrant MOS创建主机，首先要有MOS box。用户可以执行下面的命令安装MOS box。
 
 ```
 $ vagrant box add mos_box https://github.com/yangcs2009/vagrant-mos/raw/master/mos.box
 ...
 ```
 
-And then make a Vagrantfile that looks like the following, filling in
-your information where necessary.
+完成以上工作后，就可以开始创建MOS主机了，首先创建一个工作目录，然后创建一份Vagrant配置文档。
+
+```
+$ mkdir vagrant_workplace
+$ cd vagrant_workplace
+$ vagrant init
+```
+然后就会发现在该目录下新生成一个Vagrantfile文档，编辑该文档如下：
 
 ```
 Vagrant.configure("2") do |config|
@@ -72,53 +69,33 @@ Vagrant.configure("2") do |config|
 end
 ```
 
-And then run `vagrant up --provider=mos`.
+完成后保存，然后执行 `vagrant up --provider=mos`就可以创建MOS主机了。
 
-This will start an Ubuntu 12.04 instance in the us-east-1 region within
-your account. And assuming your SSH information was filled in properly
-within your Vagrantfile, SSH and provisioning will work as well.
+当然这一切都是假定你的ssh配置信息已经完成，如何设置ssh信息请参见[美团云秘钥](http://cloud.sankuai.com/console/#keypairs)。
 
-Note that normally a lot of this boilerplate is encoded within the box
-file, but the box file used for the quick start, the "dummy" box, has
-no preconfigured defaults.
+## Box设置
 
-If you have issues with SSH connecting, make sure that the instances
-are being launched with a security group that allows SSH access.
+不同的vagrant provider都必须使用符合响应要求的box来创建新主机。我们样例采用的是MOS的box `mos`。用户可以查看[example_box](https://github.com/yangcs2009/vagrant-mos/tree/master/example_box)，从中还可以学习如何设置自己的boxes。
 
-## Box Format
 
-Every provider in Vagrant must introduce a custom box format. This
-provider introduces `mos` boxes. You can view an example box in
-the [example_box/ directory](https://github.com/mitchellh/vagrant-mos/tree/master/example_box).
-That directory also contains instructions on how to build a box.
+## 配置文档
 
-The box format is basically just the required `metadata.json` file
-along with a `Vagrantfile` that does default settings for the
-provider-specific configuration for this provider.
+MOS provider设置了若干参数，主要参数说明如下：
 
-## Configuration
+* `access_key_id` - 访问美团云的key
+* `secret_access_key` - 访问美团云的secret
+* `secret_access_url` -访问美团云的url
+* `region` - 创建主机的region，例如 "us-east-1"
+* `ami` - 创建美团云主机的镜像，例如 "fa1026fe-c082-4ead-8458-802bf65ca64c"，用户可以使用`vagrant images`查看可以使用的镜像
+* `instance_ready_timeout` - 等待MOS主机创建成功最长时间，单位为秒。默认为120s。
+* `instance_name` - 创建的MOS主机名称，例如 "ubuntu007"。
+* `instance_type` - 创建的MOS主机类型，例如"C1_M1". 默认配置为 "C1_M2".
+* `keypair_name` - 用户使用的秘钥名称。通过使用秘钥，用户登录该创建的主机时就不需要在输入繁琐的密码了
+* `use_iam_profile` - 如果该参数设置，则使用[IAM profiles](http://docs.mos.amazon.com/IAM/latest/UserGuide/instance-profiles.html)认证。
 
-This provider exposes quite a few provider-specific configuration options:
+一个典型的配置文档如下所示：
 
-* `access_key_id` - The access key for accessing MOS
-* `ami` - The image id to boot, such as "fa1026fe-c082-4ead-8458-802bf65ca64c"
-* `instance_ready_timeout` - The number of seconds to wait for the instance
-  to become "ready" in MOS. Defaults to 120 seconds.
-  * `instance_name` - The name of instance to be created, such as "ubuntu01". The default
-  value of this if not specified is 'default'.
-* `instance_type` - The type of instance, such as "C1_M1". The default
-  value of this if not specified is "C1_M2".
-* `keypair_name` - The name of the keypair to use to bootstrap images
-   which support it.
-* `secret_access_url` - The accee url for accessing MOS
-* `region` - The region to start the instance in, such as "us-east-1"
-* `secret_access_key` - The secret access key for accessing MOS
-* `use_iam_profile` - If true, will use [IAM profiles](http://docs.mos.amazon.com/IAM/latest/UserGuide/instance-profiles.html)
-  for credentials.
-
-These can be set like typical provider-specific configuration:
-
-```ruby
+```  
 Vagrant.configure("2") do |config|
   # ... other stuff
 
@@ -130,76 +107,30 @@ Vagrant.configure("2") do |config|
 end
 ```
 
-In addition to the above top-level configs, you can use the `region_config`
-method to specify region-specific overrides within your Vagrantfile. Note
-that the top-level `region` config must always be specified to choose which
-region you want to actually use, however. This looks like this:
+## 网络
 
-```ruby
-Vagrant.configure("2") do |config|
-  # ... other stuff
+MOS的网络功能 `config.vm.network` 暂时不支持。如果用户指定相关参数的话，vagrant会给出警告。
 
-  config.vm.provider :mos do |mos|
-    mos.access_key_id = "foo"
-    mos.secret_access_key = "bar"
-    mos.region = "us-east-1"
+## 文件夹同步
 
-    # Simple region config
-    mos.region_config "us-east-1", :ami => "ami-12345678"
+MOS 支持文件夹同步。通过使用`rsync` 命令来指定。
 
-    # More comprehensive region config
-    mos.region_config "us-west-2" do |region|
-      region.ami = "ami-87654321"
-      region.keypair_name = "company-west"
-    end
-  end
-end
-```
-
-The region-specific configurations will override the top-level
-configurations when that region is used. They otherwise inherit
-the top-level configurations, as you would probably expect.
-
-## Networks
-
-Networking features in the form of `config.vm.network` are not
-supported with `vagrant-mos`, currently. If any of these are
-specified, Vagrant will emit a warning, but will otherwise boot
-the MOS machine.
-
-## Synced Folders
-
-There is minimal support for synced folders. Upon `vagrant up`,
-`vagrant reload`, and `vagrant provision`, the MOS provider will use
-`rsync` (if available) to uni-directionally sync the folder to
-the remote machine over SSH.
-
-See [Vagrant Synced folders: rsync](https://docs.vagrantup.com/v2/synced-folders/rsync.html)
+具体内容可以参见 [Vagrant Synced folders: rsync](https://docs.vagrantup.com/v2/synced-folders/rsync.html)
 
 
-## Development
+## 自定义开发
 
-To work on the `vagrant-mos` plugin, clone this repository out, and use
-[Bundler](http://gembundler.com) to get the dependencies:
+如果用户需要在 `vagrant-mos` plugin基础上实现自己的功能，克隆该工程，然后使用
+[Bundler](http://gembundler.com)获得依赖：
 
 ```
 $ bundle
 ```
 
-Once you have the dependencies, verify the unit tests pass with `rake`:
+完成后，使用`rake`测试:
 
 ```
 $ bundle exec rake
 ```
 
-If those pass, you're ready to start developing the plugin. You can test
-the plugin without installing it into your Vagrant environment by just
-creating a `Vagrantfile` in the top level of this directory (it is gitignored)
-and add the following line to your `Vagrantfile` 
-```ruby
-Vagrant.require_plugin "vagrant-mos"
-```
-Use bundler to execute Vagrant:
-```
-$ bundle exec vagrant up --provider=mos
-```
+如果以上步骤没有问题的话，用户就可以开始自己的开发工作了。
