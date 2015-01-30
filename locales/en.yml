@@ -1,0 +1,118 @@
+en:
+  vagrant_mos:
+    already_status: |-
+      The machine is already %{status}.
+
+    launching_instance: |-
+      Launching an instance with the following settings...
+    launch_no_keypair: |-
+      Warning! You didn't specify a keypair to launch your instance with.
+      This can sometimes result in not being able to access your instance.
+    not_created: |-
+      Instance is not created. Please run `vagrant up` first.
+    ready: |-
+      Machine is booted and ready for use!
+    rsync_not_found_warning: |-
+      Warning! Folder sync disabled because the rsync binary is missing in the %{side}.
+      Make sure rsync is installed and the binary can be found in the PATH.
+    rsync_folder: |-
+      Rsyncing folder: %{hostpath} => %{guestpath}
+    starting: |-
+      Starting the instance...
+    stopping: |-
+      Stopping the instance...
+    terminating: |-
+      Terminating the instance...
+    waiting_for_ready: |-
+      Waiting for instance to become "ready"...
+    waiting_for_ssh: |-
+      Waiting for SSH to become available...
+    warn_networks: |-
+      Warning! The MOS provider doesn't support any of the Vagrant
+      high-level network configurations (`config.vm.network`). They
+      will be silently ignored.
+    warn_ssh_access: |-
+      Warning! Vagrant might not be able to SSH into the instance.
+      Please check your security groups settings.
+    will_not_destroy: |-
+      The instance '%{name}' will not be destroyed, since the confirmation
+      was declined.
+
+    config:
+      access_key_id_required: |-
+        An access key ID must be specified via "access_key_id"
+      ami_required: |-
+        An AMI must be configured via "ami" (region: #{region})
+      private_key_missing: |-
+        The specified private key for MOS could not be found
+      region_required: |-
+        A region must be specified via "region"
+      secret_access_key_required: |-
+        A secret access key is required via "secret_access_key"
+      secret_access_url_required: |-
+        A secret access url is required via "secret_access_url"
+
+    errors:
+      mos_error: |-
+        There was an error talking to MOS. The error message is shown
+        below:
+
+        %{message}
+      internal_mos_error: |-
+        There was an error talking to MOS. The error message is shown
+        below:
+
+        Error: %{error}
+        Response: %{response}
+      instance_ready_timeout: |-
+        The instance never became "ready" in MOS. The timeout currently
+        set waiting for the instance to become ready is %{timeout} seconds.
+        Please verify that the machine properly boots. If you need more time
+        set the `instance_ready_timeout` configuration on the MOS provider.
+      rsync_error: |-
+        There was an error when attempting to rsync a shared folder.
+        Please inspect the error message below for more info.
+
+        Host path: %{hostpath}
+        Guest path: %{guestpath}
+        Error: %{stderr}
+      mkdir_error: |-
+        There was an error when attempting to create a shared host folder.
+        Please inspect the error message below for more info.
+
+        Host path: %{hostpath}
+        Error: %{err}
+
+    states:
+      short_not_created: |-
+        not created
+      long_not_created: |-
+        The MOS instance is not created. Run `vagrant up` to create it.
+
+      short_ready: |-
+        stopped
+      long_ready: |-
+        The MOS instance is stopped. Run `vagrant up` to start it.
+
+      short_stopping: |-
+        stopping
+      long_stopping: |-
+        The MOS instance is stopping. Wait until is completely stopped to
+        run `vagrant up` and start it.
+
+      short_pending: |-
+        pending
+      long_pending: |-
+        The MOS instance is pending a start (i.e. this is a transition state).
+
+      short_running: |-
+        running
+      long_running: |-
+        The MOS instance is running. To stop this machine, you can run
+        `vagrant halt`. To destroy the machine, you can run `vagrant destroy`.
+
+      short_block_stream: |-
+        pending
+      long_block_stream: |-
+        The MOS instance is still being initialized. Wait until is completely
+        running.

@@ -1,0 +1,8 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.provider :mos do |mos|
+    mos.ami = "fa1026fe-c082-4ead-8458-802bf65ca64c"
+  end
+end
