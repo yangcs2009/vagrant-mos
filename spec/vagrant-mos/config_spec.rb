@@ -15,17 +15,16 @@ describe VagrantPlugins::MOS::Config do
       end
     end
 
-    its("access_key_id")     { should be_nil }
-    its("ami")               { should be_nil }
+    its("access_key")     { should be_nil }
+    its("template_id")               { should be_nil }
     its("instance_ready_timeout") { should == 120 }
     its("name")     { should be_nil }
     its("instance_type")     { should == "C1_M2" }
     its("keypair_name")      { should be_nil }
     its("region")            { should == "us-east-1" }
-    its("secret_access_key") { should be_nil }
-    its("secret_access_url") { should be_nil }
+    its("access_secret") { should be_nil }
+    its("access_url") { should be_nil }
     its("use_iam_profile")   { should be_false }
-    its("terminate_on_shutdown") { should == false }
     its("ssh_host_attribute") { should be_nil }
   end
 
@@ -34,9 +33,9 @@ describe VagrantPlugins::MOS::Config do
     # simple boilerplate test, so I cut corners here. It just sets
     # each of these attributes to "foo" in isolation, and reads the value
     # and asserts the proper result comes back out.
-    [:access_key_id, :ami, :instance_ready_timeout,:name,
+    [:access_key, :template_id, :data_disk, :band_width, :instance_ready_timeout, :name,
       :instance_type, :keypair_name, :ssh_host_attribute,
-      :region, :secret_access_key, :secret_access_url, :terminate_on_shutdown,
+      :region, :access_secret, :access_url,
       :use_iam_profile].each do |attribute|
 
       it "should not default #{attribute} if overridden" do
@@ -60,9 +59,9 @@ describe VagrantPlugins::MOS::Config do
         end
       end
 
-      its("access_key_id")     { should be_nil }
-      its("secret_access_key") { should be_nil }
-      its("secret_access_url")     { should be_nil }
+      its("access_key")     { should be_nil }
+      its("access_secret") { should be_nil }
+      its("access_url")     { should be_nil }
     end
 
     context "with MOS credential environment variables" do
@@ -78,31 +77,31 @@ describe VagrantPlugins::MOS::Config do
         end
       end
 
-      its("access_key_id")     { should == "access_key" }
-      its("secret_access_key") { should == "secret_key" }
-      its("secret_access_url")     { should == "secret_url" }
+      its("access_key")     { should == "access_key" }
+      its("access_secret") { should == "secret_key" }
+      its("access_url")     { should == "secret_url" }
     end
   end
 
   describe "region config" do
-    let(:config_access_key_id)     { "foo" }
-    let(:config_ami)               { "foo" }
+    let(:config_access_key)     { "foo" }
+    let(:config_template_id)               { "foo" }
     let(:config_instance_type)     { "foo" }
     let(:config_name)     { "foo" }
     let(:config_keypair_name)      { "foo" }
     let(:config_region)            { "foo" }
-    let(:config_secret_access_key) { "foo" }
-    let(:config_secret_access_url)     { "foo" }
+    let(:config_access_secret) { "foo" }
+    let(:config_access_url)     { "foo" }
 
     def set_test_values(instance)
-      instance.access_key_id     = config_access_key_id
-      instance.ami               = config_ami
+      instance.access_key     = config_access_key
+      instance.template_id               = config_template_id
       instance.instance_type     = config_instance_type
       instance.name     = config_name
       instance.keypair_name      = config_keypair_name
       instance.region            = config_region
-      instance.secret_access_key = config_secret_access_key
-      instance.secret_access_url     = config_secret_access_url
+      instance.access_secret = config_access_secret
+      instance.access_url     = config_access_url
     end
 
     it "should raise an exception if not finalized" do
@@ -122,14 +121,14 @@ describe VagrantPlugins::MOS::Config do
         instance.get_region_config("us-east-1")
       end
 
-      its("access_key_id")     { should == config_access_key_id }
-      its("ami")               { should == config_ami }
+      its("access_key")     { should == config_access_key }
+      its("template_id")               { should == config_template_id }
       its("instance_type")     { should == config_instance_type }
       its("name")     { should == config_name }
       its("keypair_name")      { should == config_keypair_name }
       its("region")            { should == config_region }
-      its("secret_access_key") { should == config_secret_access_key }
-      its("secret_access_url") { should == config_secret_access_url }
+      its("access_secret") { should == config_access_secret }
+      its("access_url") { should == config_access_url }
     end
 
     context "with a specific config set" do
@@ -148,14 +147,14 @@ describe VagrantPlugins::MOS::Config do
         instance.get_region_config(region_name)
       end
 
-      its("access_key_id")     { should == config_access_key_id }
-      its("ami")               { should == config_ami }
+      its("access_key")     { should == config_access_key }
+      its("template_id")               { should == config_template_id }
       its("instance_type")     { should == config_instance_type }
       its("name")     { should == config_name }
       its("keypair_name")      { should == config_keypair_name }
       its("region")            { should == region_name }
-      its("secret_access_key") { should == config_secret_access_key }
-      its("secret_access_url") { should == config_secret_access_url }
+      its("access_secret") { should == config_access_secret }
+      its("access_url") { should == config_access_url }
     end
 
     describe "inheritance of parent config" do
@@ -164,31 +163,31 @@ describe VagrantPlugins::MOS::Config do
       subject do
         # Set the values on a specific region
         instance.region_config region_name do |config|
-          config.ami = "child"
+          config.template_id = "child"
         end
 
         # Set some top-level values
-        instance.access_key_id = "parent"
-        instance.ami = "parent"
+        instance.access_key = "parent"
+        instance.template_id = "parent"
 
         # Finalize and get the region
         instance.finalize!
         instance.get_region_config(region_name)
       end
 
-      its("access_key_id") { should == "parent" }
-      its("ami")           { should == "child" }
+      its("access_key") { should == "parent" }
+      its("template_id")           { should == "child" }
     end
 
     describe "shortcut configuration" do
       subject do
         # Use the shortcut configuration to set some values
-        instance.region_config "us-east-1", :ami => "child"
+        instance.region_config "us-east-1", :template_id => "child"
         instance.finalize!
         instance.get_region_config("us-east-1")
       end
 
-      its("ami") { should == "child" }
+      its("template_id") { should == "child" }
     end
 
     describe "merging" do

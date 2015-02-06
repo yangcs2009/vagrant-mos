@@ -12,7 +12,7 @@ module VagrantPlugins
         region_config = machine.provider_config.get_region_config(region)
 
         @logger.info("Connecting to MOS...")
-        mos_compute = Client.new(region_config.access_key_id, region_config.secret_access_key, region_config.secret_access_url)
+        mos_compute = Client.new(region_config.access_key, region_config.access_secret, region_config.access_url)
         results = mos_compute.describe_templates['Template']
         puts results
         0

@@ -26,11 +26,12 @@ module VagrantPlugins
 
           # Get the configs
           region_config = env[:machine].provider_config.get_region_config(region)
-          ami = region_config.ami
+          data_disk = region_config.data_disk
+          band_width = region_config.band_width
+          template_id = region_config.template_id
           name = region_config.name
           instance_type = region_config.instance_type
           keypair = region_config.keypair_name
-          terminate_on_shutdown = region_config.terminate_on_shutdown
 
           # If there is no keypair then warn the user
           if !keypair
@@ -39,24 +40,25 @@ module VagrantPlugins
 
           # Launch!
           env[:ui].info(I18n.t("vagrant_mos.launching_instance"))
-          env[:ui].info(" -- Name: #{name}") if name
-          env[:ui].info(" -- Type: #{instance_type}")
-          env[:ui].info(" -- AMI: #{ami}")
-          env[:ui].info(" -- Region: #{region}")
+          env[:ui].info(" -- Machine_name: #{name}") if name
+          env[:ui].info(" -- Instance_type: #{instance_type}")
+          env[:ui].info(" -- Template_id: #{template_id}")
+          env[:ui].info(" -- Data_disk: #{data_disk}")
+          env[:ui].info(" -- Band_width: #{band_width}")
           env[:ui].info(" -- Keypair: #{keypair}") if keypair
-          env[:ui].info(" -- Terminate On Shutdown: #{terminate_on_shutdown}")
 
           options = {
               :flavor_id => instance_type,
               :name => name,
-              :image_id => ami,
+              :template_id => template_id,
+              :data_disk => data_disk,
+              :band_width => band_width,
               :key_name => keypair,
-              :instance_initiated_shutdown_behavior => terminate_on_shutdown == true ? "terminate" : nil,
           }
 
           begin
             # create a handler to access MOS
-            server = env[:mos_compute].create_instance(options[:image_id], options[:flavor_id], nil, options[:name], options[:key_name], datadisk=9, bandwidth=2)
+            server = env[:mos_compute].create_instance(options[:template_id], options[:flavor_id], nil, options[:name], options[:key_name], options[:data_disk], options[:band_width])
           rescue Exception => e
             raise Errors::MosError, :message => e.message
           end

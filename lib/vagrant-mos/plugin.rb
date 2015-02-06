@@ -24,7 +24,7 @@ module VagrantPlugins
         Config
       end
 
-      command "images" do
+      command "mos-templates" do
         require_relative "command"
         Command
       end

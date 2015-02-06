@@ -57,15 +57,12 @@ your information where necessary.
 ```
 Vagrant.configure("2") do |config|
   config.vm.box = "mos_box"
-
   config.vm.provider :mos do |mos, override|
-    mos.access_key_id = "YOUR KEY"
-    mos.secret_access_key = "YOUR SECRET KEY"
-    mos.secret_access_url = "YOUR MOS ACCESS URL"
+    mos.access_key = "YOUR KEY"
+    mos.access_secret = "YOUR SECRET KEY"
+    mos.access_url = "YOUR MOS ACCESS URL"
     mos.keypair_name = "KEYPAIR NAME"
-
-    mos.ami = "fa1026fe-c082-4ead-8458-802bf65ca64c"
-
+    mos.template_id = "fa1026fe-c082-4ead-8458-802bf65ca64c"
     override.ssh.username = "root"
     override.ssh.private_key_path = "PATH TO YOUR PRIVATE KEY"
   end
@@ -100,19 +97,19 @@ provider-specific configuration for this provider.
 
 This provider exposes quite a few provider-specific configuration options:
 
-* `access_key_id` - The access key for accessing MOS
-* `ami` - The image id to boot, such as "fa1026fe-c082-4ead-8458-802bf65ca64c"
+* `access_key` - The access key for accessing MOS
+* `template_id` - The image id to boot, such as "fa1026fe-c082-4ead-8458-802bf65ca64c"
 * `instance_ready_timeout` - The number of seconds to wait for the instance
   to become "ready" in MOS. Defaults to 120 seconds.
   * `instance_name` - The name of instance to be created, such as "ubuntu01". The default
   value of this if not specified is 'default'.
 * `instance_type` - The type of instance, such as "C1_M1". The default
   value of this if not specified is "C1_M2".
-* `keypair_name` - The name of the keypair to use to bootstrap images
+* `keypair_name` - The name of the keypair to use to bootstrap images.
    which support it.
-* `secret_access_url` - The accee url for accessing MOS
+* `access_url` - The accee url for accessing MOS
 * `region` - The region to start the instance in, such as "us-east-1"
-* `secret_access_key` - The secret access key for accessing MOS
+* `access_secret` - The secret access key for accessing MOS
 * `use_iam_profile` - If true, will use [IAM profiles](http://docs.mos.amazon.com/IAM/latest/UserGuide/instance-profiles.html)
   for credentials.
 
@@ -123,9 +120,9 @@ Vagrant.configure("2") do |config|
   # ... other stuff
 
   config.vm.provider :mos do |mos|
-    mos.access_key_id = "your_key"
-    mos.secret_access_key = "your_secret"
-    mos.secret_access_url = "your_access_url"
+    mos.access_key = "your_key"
+    mos.access_secret = "your_secret"
+    mos.access_url = "your_access_urll"
   end
 end
 ```
@@ -140,16 +137,16 @@ Vagrant.configure("2") do |config|
   # ... other stuff
 
   config.vm.provider :mos do |mos|
-    mos.access_key_id = "foo"
-    mos.secret_access_key = "bar"
+    mos.access_key = "foo"
+    mos.access_secret = "bar"
     mos.region = "us-east-1"
 
     # Simple region config
-    mos.region_config "us-east-1", :ami => "ami-12345678"
+    mos.region_config "us-east-1", :template_id => "template_id-12345678"
 
     # More comprehensive region config
     mos.region_config "us-west-2" do |region|
-      region.ami = "ami-87654321"
+      region.template_id = "template_id-87654321"
       region.keypair_name = "company-west"
     end
   end
