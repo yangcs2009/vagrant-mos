@@ -18,6 +18,7 @@ describe VagrantPlugins::MOS::Config do
     its("access_key")     { should be_nil }
     its("template_id")               { should be_nil }
     its("instance_ready_timeout") { should == 120 }
+    its("instance_package_timeout") { should == 600 }
     its("name")     { should be_nil }
     its("instance_type")     { should == "C1_M2" }
     its("keypair_name")      { should be_nil }
@@ -34,7 +35,7 @@ describe VagrantPlugins::MOS::Config do
     # each of these attributes to "foo" in isolation, and reads the value
     # and asserts the proper result comes back out.
     [:access_key, :template_id, :data_disk, :band_width, :instance_ready_timeout, :name,
-      :instance_type, :keypair_name, :ssh_host_attribute,
+     :instance_package_timeout, :instance_type, :keypair_name, :ssh_host_attribute,
       :region, :access_secret, :access_url,
       :use_iam_profile].each do |attribute|
 
@@ -44,11 +45,7 @@ describe VagrantPlugins::MOS::Config do
         instance.send(attribute).should == "foo"
       end
     end
-    it "should not default security_groups if overridden" do
-      instance.security_groups = "foo"
-      instance.finalize!
-      instance.security_groups.should == ["foo"]
-    end
+
   end
 
   describe "getting credentials from environment" do

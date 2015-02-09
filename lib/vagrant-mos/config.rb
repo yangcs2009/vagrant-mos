@@ -28,6 +28,11 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :name
 
+      # The timeout to wait for an instance to successfully burn into an template.
+      #
+      # @return [Fixnum]
+      attr_accessor :instance_package_timeout
+
       # The timeout to wait for an instance to become ready.
       #
       # @return [Fixnum]
@@ -85,6 +90,7 @@ module VagrantPlugins
         @data_disk                 = UNSET_VALUE
         @band_width                = UNSET_VALUE
         @instance_ready_timeout    = UNSET_VALUE
+        @instance_package_timeout  = UNSET_VALUE
         @name                      = UNSET_VALUE
         @instance_type             = UNSET_VALUE
         @keypair_name              = UNSET_VALUE
@@ -182,7 +188,8 @@ module VagrantPlugins
         # Set the default timeout for waiting for an instance to be ready
         @instance_ready_timeout = 120 if @instance_ready_timeout == UNSET_VALUE
 
-
+        # Set the default timeout for waiting for an instance to burn into a template
+        @instance_package_timeout = 600 if @instance_package_timeout == UNSET_VALUE
         # Default instance type is an C1_M2
         @instance_type = "C1_M2" if @instance_type == UNSET_VALUE
         # Keypair defaults to nil
