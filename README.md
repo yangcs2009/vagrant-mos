@@ -93,8 +93,8 @@ MOS provider设置了若干参数，主要参数说明如下：
 * `instance_ready_timeout` - 等待MOS主机创建成功最长时间，单位为秒。默认为120s
 * `instance_package_timeout` - 等待模板创建成功最长时间，单位为秒。默认为600s
 * `instance_name` - 创建的MOS主机名称，例如 "ubuntu007"。
-* `instance_type` - 创建的MOS主机类型，例如"C1_M1". 默认配置为 "C1_M2".
-* `keypair_name` - 用户使用的秘钥名称。通过使用秘钥，用户登录该创建的主机时就不需要在输入繁琐的密码了
+* `instance_type` - 创建的MOS主机类型，例如"C1_M1". 默认配置为 "C1_M2"默认配置为 "C1_M2"代表1核CPU，2G内存，以此类推，用户可以使用`vagrant mos-flavors`查看
+* `keypair_name` - 用户使用的秘钥名称。通过使用秘钥，用户登录该创建的主机时就不需要在输入繁琐的密码。具体操作用户可登陆**[美团云秘钥](http://cloud.sankuai.com/console/#keypairs)**查看。
 * `use_iam_profile` - 如果该参数设置，则使用[IAM profiles](http://docs.mos.amazon.com/IAM/latest/UserGuide/instance-profiles.html)认证。
 
 一个典型的配置文档如下所示：
