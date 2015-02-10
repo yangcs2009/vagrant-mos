@@ -25,7 +25,12 @@ module VagrantPlugins
       end
 
       command "mos-templates" do
-        require_relative "command"
+        require_relative "command/mos-templates"
+        Command
+      end
+
+      command "mos-flavors" do
+        require_relative "command/mos-flavors"
         Command
       end
 
