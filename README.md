@@ -22,6 +22,7 @@ provider，从而使得Vagrant可以像管理VirtualBox那样管理美团云主�
 * 通过`vagrant status`命令管理已创建的MOS主机
 * 通过`vagrant package`命令创建MOS实例模板
 * 通过`vagrant mos-templates`查看可使用的模板
+* 通过`vagrant mos-flavors`查看可创建的实例类型，例如"C1_M2"代表1核CPU，2G内存，以此类推
   
 ## 安装使用
 
@@ -55,7 +56,6 @@ $ vagrant init
 ```
 Vagrant.configure("2") do |config|
   config.vm.box = "mos_box"
-
   config.vm.provider :mos do |mos, override|
     mos.access_key = "YOUR KEY"
     mos.access_secret = "YOUR SECRET KEY"
