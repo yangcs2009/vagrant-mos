@@ -1,5 +1,5 @@
 module VagrantPlugins
   module MOS
-    VERSION = '0.9.35'
+    VERSION = '0.9.42'
   end
 end
