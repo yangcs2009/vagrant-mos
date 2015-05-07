@@ -24,8 +24,13 @@ module VagrantPlugins
         Config
       end
 
-      command "images" do
-        require_relative "command"
+      command "mos-templates" do
+        require_relative "command/mos-templates"
+        Command
+      end
+
+      command "mos-flavors" do
+        require_relative "command/mos-flavors"
         Command
       end
 

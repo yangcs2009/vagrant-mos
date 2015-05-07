@@ -11,16 +11,18 @@
 该版本的[Vagrant](http://www.vagrantup.com) 1.2+ plugin现在支持[MOS](http://cloud.sankuai.com/)
 provider，从而使得Vagrant可以像管理VirtualBox那样管理美团云主机。
 
-**NOTE:** 该版本的plugin要求Vagrant版本为 1.2+,
+**NOTE:** 该版本的plugin要求Vagrant版本为 1.2+,而且最好是最新版本
 
 ## 主要功能
 
-* 支持Vagrant常用命令 `up`, `status`, `destroy`, `halt`, `reload` 以及 `ssh` 
+* 支持Vagrant常用命令 `up`, `status`, `destroy`, `halt`, `reload`, `package`, `ssh`以及`mos-templates` 
 * 创建 MOS 主机实例
 * SSH连接已创建的主机
 * 支持通过`rsync`命令同步文件夹
 * 通过`vagrant status`命令管理已创建的MOS主机
-* 通过`vagrant images`查看可使用的镜像.  
+* 通过`vagrant package`命令创建MOS实例模板
+* 通过`vagrant mos-templates`查看可使用的模板
+* 通过`vagrant mos-flavors`查看可创建的实例类型，例如"C1_M2"代表1核CPU，2G内存，以此类推
   
 ## 安装使用
 
@@ -54,15 +56,14 @@ $ vagrant init
 ```
 Vagrant.configure("2") do |config|
   config.vm.box = "mos_box"
-
   config.vm.provider :mos do |mos, override|
-    mos.access_key_id = "YOUR KEY"
-    mos.secret_access_key = "YOUR SECRET KEY"
-    mos.secret_access_url = "YOUR MOS ACCESS URL"
+    mos.access_key = "YOUR KEY"
+    mos.access_secret = "YOUR SECRET KEY"
+    mos.access_url = "YOUR MOS ACCESS URL"
     mos.keypair_name = "KEYPAIR NAME"
-
-    mos.ami = "fa1026fe-c082-4ead-8458-802bf65ca64c"
-
+    mos.template_id = "fa1026fe-c082-4ead-8458-802bf65ca64c"
+    mos.data_disk = 100
+    mos.band_with = 10
     override.ssh.username = "root"
     override.ssh.private_key_path = "PATH TO YOUR PRIVATE KEY"
   end
@@ -82,15 +83,18 @@ end
 
 MOS provider设置了若干参数，主要参数说明如下：
 
-* `access_key_id` - 访问美团云的key
-* `secret_access_key` - 访问美团云的secret
-* `secret_access_url` -访问美团云的url
-* `region` - 创建主机的region，例如 "us-east-1"
-* `ami` - 创建美团云主机的镜像，例如 "fa1026fe-c082-4ead-8458-802bf65ca64c"，用户可以使用`vagrant images`查看可以使用的镜像
-* `instance_ready_timeout` - 等待MOS主机创建成功最长时间，单位为秒。默认为120s。
+* `access_key` - 访问美团云的key
+* `access_secret` - 访问美团云的secret
+* `access_url` -访问美团云的url
+* `region` - 创建主机的region，例如 "beijing"
+* `template_id` - 创建美团云主机的镜像ID，例如 "fa1026fe-c082-4ead-8458-802bf65ca64c"，用户可以使用`vagrant mos-templates`查看可以使用的镜像  
+* `data_disk` - 创建美团云主机的数据盘大小，单位为GB，例如100代表创建100G的数据盘  
+* `band_width` - 创建美团云主机的外网带宽大小，单位为Mbps，例如10代表选择10Mbps的外网带宽
+* `instance_ready_timeout` - 等待MOS主机创建成功最长时间，单位为秒。默认为120s
+* `instance_package_timeout` - 等待模板创建成功最长时间，单位为秒。默认为600s
 * `instance_name` - 创建的MOS主机名称，例如 "ubuntu007"。
-* `instance_type` - 创建的MOS主机类型，例如"C1_M1". 默认配置为 "C1_M2".
-* `keypair_name` - 用户使用的秘钥名称。通过使用秘钥，用户登录该创建的主机时就不需要在输入繁琐的密码了
+* `instance_type` - 创建的MOS主机类型，例如"C1_M1". 默认配置为 "C1_M2"默认配置为 "C1_M2"代表1核CPU，2G内存，以此类推，用户可以使用`vagrant mos-flavors`查看
+* `keypair_name` - 用户使用的秘钥名称。通过使用秘钥，用户登录该创建的主机时就不需要在输入繁琐的密码。具体操作用户可登陆**[美团云秘钥](http://cloud.sankuai.com/console/#keypairs)**查看。
 * `use_iam_profile` - 如果该参数设置，则使用[IAM profiles](http://docs.mos.amazon.com/IAM/latest/UserGuide/instance-profiles.html)认证。
 
 一个典型的配置文档如下所示：
@@ -100,9 +104,9 @@ Vagrant.configure("2") do |config|
   # ... other stuff
 
   config.vm.provider :mos do |mos|
-    mos.access_key_id = "your_key"
-    mos.secret_access_key = "your_secret"
-    mos.secret_access_url = "your_access_url"
+    mos.access_key = "your_key"
+    mos.access_secret = "your_secret"
+    mos.access_url = "your_access_urll"
   end
 end
 ```

@@ -6,17 +6,32 @@ module VagrantPlugins
       # The access key ID for accessing MOS.
       #
       # @return [String]
-      attr_accessor :access_key_id
+      attr_accessor :access_key
 
-      # The ID of the image to use.
+      # The ID of the template to use.
       #
       # @return [String]
-      attr_accessor :ami
+      attr_accessor :template_id
+
+      # The data_disk of the instance to create.
+      #
+      # @return [String]
+      attr_accessor :data_disk
+
+      # The band_width of the instance to create.
+      #
+      # @return [String]
+      attr_accessor :band_width
 
       # The name of the instance to create.
       #
       # @return [String]
       attr_accessor :name
+
+      # The timeout to wait for an instance to successfully burn into an template.
+      #
+      # @return [Fixnum]
+      attr_accessor :instance_package_timeout
 
       # The timeout to wait for an instance to become ready.
       #
@@ -46,23 +61,18 @@ module VagrantPlugins
       # The secret access key for accessing MOS.
       #
       # @return [String]
-      attr_accessor :secret_access_key
+      attr_accessor :access_secret
 
       # The secret access url for accessing MOS.
       #
       # @return [String]
-      attr_accessor :secret_access_url
+      attr_accessor :access_url
 
       # Use IAM Instance Role for authentication to MOS instead of an
-      # explicit access_id and secret_access_key
+      # explicit access_id and access_secret
       #
       # @return [Boolean]
       attr_accessor :use_iam_profile
-
-      # Indicates whether an instance stops or terminates when you initiate shutdown from the instance
-      #
-      # @return [bool]
-      attr_accessor :terminate_on_shutdown
 
       # Specifies which address to connect to with ssh
       # Must be one of:
@@ -75,18 +85,20 @@ module VagrantPlugins
       attr_accessor :ssh_host_attribute
 
       def initialize(region_specific=false)
-        @access_key_id             = UNSET_VALUE
-        @ami                       = UNSET_VALUE
+        @access_key                = UNSET_VALUE
+        @template_id               = UNSET_VALUE
+        @data_disk                 = UNSET_VALUE
+        @band_width                = UNSET_VALUE
         @instance_ready_timeout    = UNSET_VALUE
+        @instance_package_timeout  = UNSET_VALUE
         @name                      = UNSET_VALUE
         @instance_type             = UNSET_VALUE
         @keypair_name              = UNSET_VALUE
         @region                    = UNSET_VALUE
         @version                   = UNSET_VALUE
-        @secret_access_key         = UNSET_VALUE
-        @secret_access_url         = UNSET_VALUE
+        @access_secret             = UNSET_VALUE
+        @access_url                = UNSET_VALUE
         @use_iam_profile           = UNSET_VALUE
-        @terminate_on_shutdown     = UNSET_VALUE
         @ssh_host_attribute        = UNSET_VALUE
 
         # Internal state (prefix with __ so they aren't automatically
@@ -99,10 +111,10 @@ module VagrantPlugins
 
       # Allows region-specific overrides of any of the settings on this
       # configuration object. This allows the user to override things like
-      # AMI and keypair name for regions. Example:
+      # template_id and keypair name for regions. Example:
       #
       #     mos.region_config "us-east-1" do |region|
-      #       region.ami = "ami-12345678"
+      #       region.template_id = "template_id-12345678"
       #       region.keypair_name = "company-east"
       #     end
       #
@@ -157,12 +169,18 @@ module VagrantPlugins
       def finalize!
         # Try to get access keys from standard MOS environment variables; they
         # will default to nil if the environment variables are not present.
-        @access_key_id     = ENV['MOS_ACCESS_KEY'] if @access_key_id     == UNSET_VALUE
-        @secret_access_key = ENV['MOS_SECRET_KEY'] if @secret_access_key == UNSET_VALUE
-        @secret_access_url = ENV['MOS_SECRET_URL'] if @secret_access_url == UNSET_VALUE
+        @access_key     = ENV['MOS_ACCESS_KEY'] if @access_key     == UNSET_VALUE
+        @access_secret  = ENV['MOS_SECRET_KEY'] if @access_secret  == UNSET_VALUE
+        @access_url     = ENV['MOS_SECRET_URL'] if @access_url     == UNSET_VALUE
 
-        # AMI must be nil, since we can't default that
-        @ami = nil if @ami == UNSET_VALUE
+        # Template_id must be nil, since we can't default that
+        @template_id = nil if @template_id == UNSET_VALUE
+
+        # Default data_disk
+        @data_disk = 10 if @data_disk == UNSET_VALUE
+
+        # Default band_width
+        @band_width = 2 if @band_width == UNSET_VALUE
 
         # Default instance name is nil
         @name = nil if @name == UNSET_VALUE
@@ -170,7 +188,8 @@ module VagrantPlugins
         # Set the default timeout for waiting for an instance to be ready
         @instance_ready_timeout = 120 if @instance_ready_timeout == UNSET_VALUE
 
-
+        # Set the default timeout for waiting for an instance to burn into a template
+        @instance_package_timeout = 600 if @instance_package_timeout == UNSET_VALUE
         # Default instance type is an C1_M2
         @instance_type = "C1_M2" if @instance_type == UNSET_VALUE
         # Keypair defaults to nil
@@ -183,9 +202,6 @@ module VagrantPlugins
 
         # By default we don't use an IAM profile
         @use_iam_profile = false if @use_iam_profile == UNSET_VALUE
-
-        # default false
-        @terminate_on_shutdown = false if @terminate_on_shutdown == UNSET_VALUE
 
         # default to nil
         @ssh_host_attribute = nil if @ssh_host_attribute == UNSET_VALUE
@@ -226,15 +242,15 @@ module VagrantPlugins
           config = get_region_config(@region)
 
           if !config.use_iam_profile
-            errors << I18n.t("vagrant_mos.config.access_key_id_required") if \
-              config.access_key_id.nil?
-            errors << I18n.t("vagrant_mos.config.secret_access_key_required") if \
-              config.secret_access_key.nil?
-            errors << I18n.t("vagrant_mos.config.secret_access_url_required") if \
-              config.secret_access_url.nil?
+            errors << I18n.t("vagrant_mos.config.access_key_required") if \
+              config.access_key.nil?
+            errors << I18n.t("vagrant_mos.config.access_secret_required") if \
+              config.access_secret.nil?
+            errors << I18n.t("vagrant_mos.config.access_url_required") if \
+              config.access_url.nil?
           end
 
-          errors << I18n.interpolate("vagrant_mos.config.ami_required", :region => @region)  if config.ami.nil?
+          errors << I18n.interpolate("vagrant_mos.config.template_id_required", :region => @region)  if config.template_id.nil?
         end
 
         { "MOS Provider" => errors }
