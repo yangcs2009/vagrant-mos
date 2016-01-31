@@ -32,6 +32,8 @@ module VagrantPlugins
           name = region_config.name
           instance_type = region_config.instance_type
           keypair = region_config.keypair_name
+          secgroup = region_config.secgroup
+          zone = region_config.zone
 
           # If there is no keypair then warn the user
           if !keypair
@@ -46,6 +48,8 @@ module VagrantPlugins
           env[:ui].info(" -- Data_disk: #{data_disk}")
           env[:ui].info(" -- Band_width: #{band_width}")
           env[:ui].info(" -- Keypair: #{keypair}") if keypair
+          env[:ui].info(" -- Secgroup: #{secgroup}")
+          env[:ui].info(" -- Zone: #{zone}")
 
           options = {
               :flavor_id => instance_type,
@@ -54,11 +58,15 @@ module VagrantPlugins
               :data_disk => data_disk,
               :band_width => band_width,
               :key_name => keypair,
+              :secgroup => secgroup,
+              :zone => zone,
           }
 
           begin
             # create a handler to access MOS
-            server = env[:mos_compute].create_instance(options[:template_id], options[:flavor_id], nil, options[:name], options[:key_name], options[:data_disk], options[:band_width])
+            server = env[:mos_compute].create_instance(options[:template_id], options[:flavor_id], nil, options[:name],
+                                                       options[:key_name], options[:secgroup], options[:data_disk],
+                                                       options[:band_width], options[:zone])
           rescue Exception => e
             raise Errors::MosError, :message => e.message
           end

@@ -48,6 +48,16 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :keypair_name
 
+      # The name of the secgroup to use.
+      #
+      # @return [String]
+      attr_accessor :secgroup
+
+      # The name of the zone to use.
+      #
+      # @return [String]
+      attr_accessor :zone
+
       # The name of the MOS region in which to create the instance.
       #
       # @return [String]
@@ -94,6 +104,8 @@ module VagrantPlugins
         @name                      = UNSET_VALUE
         @instance_type             = UNSET_VALUE
         @keypair_name              = UNSET_VALUE
+        @secgroup                  = UNSET_VALUE
+        @zone                      = UNSET_VALUE
         @region                    = UNSET_VALUE
         @version                   = UNSET_VALUE
         @access_secret             = UNSET_VALUE
@@ -177,10 +189,10 @@ module VagrantPlugins
         @template_id = nil if @template_id == UNSET_VALUE
 
         # Default data_disk
-        @data_disk = 10 if @data_disk == UNSET_VALUE
+        @data_disk = 0 if @data_disk == UNSET_VALUE
 
         # Default band_width
-        @band_width = 2 if @band_width == UNSET_VALUE
+        @band_width = 0 if @band_width == UNSET_VALUE
 
         # Default instance name is nil
         @name = nil if @name == UNSET_VALUE
@@ -194,6 +206,12 @@ module VagrantPlugins
         @instance_type = "C1_M2" if @instance_type == UNSET_VALUE
         # Keypair defaults to nil
         @keypair_name = nil if @keypair_name == UNSET_VALUE
+
+        # set default secgroup
+        @secgroup = nil if @secgroup == UNSET_VALUE
+
+        # set default zone
+        @zone = nil if @zone ==  UNSET_VALUE
 
         # Default region is us-east-1. This is sensible because MOS
         # generally defaults to this as well.
